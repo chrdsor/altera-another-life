@@ -18,4 +18,31 @@ function fitResult(){const table={S:{chest:96,length:55},M:{chest:104,length:60}
 function copy(data){if(navigator.clipboard?.writeText)navigator.clipboard.writeText(JSON.stringify(data,null,2)).then(()=>tell('Kopiert.')).catch(()=>tell('Kunne ikke kopiere.'));else tell('Kopiering støttes ikke her.')}
 $('gameTab').onclick=()=>{state.mode='game';render()};$('fitTab').onclick=()=>{state.mode='fit';render()};$('random').onclick=()=>{const g=state.game;for(const k of ['hair','hairColor','skin','top','pants'])if(!state.locks[k]){const values=k==='hair'?hairs:palette[k];const opts=values.filter(x=>x!==g[k]);g[k]=opts[Math.floor(Math.random()*opts.length)]}g.name='Min avatar';save();render()};$('resetGame').onclick=()=>{state.game={...presets[0]};save();render()};$('resetFit').onclick=()=>{state.fit={...defaultFit};save();render()};$('deleteFit').onclick=()=>{if(confirm('Slette private mål fra denne enheten?')){state.fit={...defaultFit};save();render()}};$('size').onchange=fitResult;$('save').onclick=save;$('copyGame').onclick=()=>copy(state.game);$('copyFit').onclick=()=>copy(state.fit);render();
 })();
+</script><style>
+#altera59tools{border:1px solid #a36abb;background:#21152eee;border-radius:14px;padding:12px;margin-top:12px}
+#altera59tools h3{margin:0 0 9px;font-size:14px}
+#altera59tools .minirow{display:flex;flex-wrap:wrap;gap:6px}
+#altera59tools .minirow button{flex:1;min-width:90px}
+#altera59tools .hint{font-size:11px;color:#d5badc;margin:8px 0 0;line-height:1.5}
+#altera59compare{white-space:pre-line;font-size:12px;line-height:1.5}
+</style>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const root=$('fitLeft');if(!root||$('altera59tools'))return;
+const panel=document.createElement('section');panel.id='altera59tools';
+panel.innerHTML='<h3>5.9 · Målekontroll</h3><div class="minirow"><button type="button" id="altera59draft">Bruk AI-eksempel</button><button type="button" id="altera59compareBtn">Sammenlign</button><button type="button" id="altera59undo">Angre</button></div><p class="hint">AI-eksempel er fiktive måleverdier, IKKE analyse av et bilde. Du kan korrigere alle verdier med glidebryterne.</p><div id="altera59compare" aria-live="polite"></div>';
+root.appendChild(panel);
+const fields=[['height','Høyde'],['chest','Bryst'],['waist','Midje'],['hips','Hofter'],['shoulders','Skuldre'],['inseam','Benlengde']];
+let baseline=null,history=[],current=null;
+const inputs=()=>Array.from($('measurements').querySelectorAll('input[type="range"]'));
+const read=()=>Object.fromEntries(fields.map(([k],i)=>[k,Number(inputs()[i]?.value||0)]));
+const apply=values=>{inputs().forEach((input,i)=>{const k=fields[i][0];if(values[k]!=null){input.value=values[k];input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}))}});current=read();};
+function compare(){const out=$('altera59compare');if(!baseline){out.textContent='Velg «Bruk AI-eksempel» først.';return}const now=read();out.textContent=fields.map(([k,label])=>label+': forslag '+baseline[k]+' cm → ditt valg '+now[k]+' cm'+(now[k]!==baseline[k]?' (endret)':'')).join('\n');}
+$('altera59draft').onclick=()=>{history.push(read());baseline={height:174,chest:95,waist:81,hips:99,shoulders:43,inseam:80};apply(baseline);compare()};
+$('altera59compareBtn').onclick=compare;
+$('altera59undo').onclick=()=>{const prev=history.pop();if(prev){apply(prev);compare()}else $('altera59compare').textContent='Ingen tidligere endring å angre.'};
+root.addEventListener('pointerdown',e=>{if(e.target.matches('input[type="range"]')){const now=read();if(!current||JSON.stringify(now)!==JSON.stringify(current))history.push(now);else history.push({...now});if(history.length>30)history.shift()}});
+root.addEventListener('change',e=>{if(e.target.matches('input[type="range"]')){current=read();if(baseline)compare()}});
+})();
 </script></body></html>
