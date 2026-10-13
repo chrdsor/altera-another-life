@@ -35,7 +35,7 @@ function setup(){
   el('button',{text:'← Roter'},bar).onclick=()=>{rotation-=.25;render()};
   el('button',{text:'Roter →'},bar).onclick=()=>{rotation+=.25;render()};
   el('button',{text:'Tilpass'},bar).onclick=()=>{const p=$('fallbackOptions');p.hidden=!p.hidden};
-  const panel=el('div',{id:'fallbackOptions'},wrap);
+  const panel=el('div',{id:'fallbackOptions',hidden:''},wrap);
   el('div',{class:'fallbackTitle',text:'AVATAR · TILPASNING'},panel);
   const row=el('div',{class:'fallbackChoices'},panel);
   el('button',{text:'Kvinne'},row).onclick=()=>change({gender:'Kvinne'});
@@ -50,6 +50,8 @@ function setup(){
   $('save')?.addEventListener('click',()=>{if(active)save()});
   $('front')?.addEventListener('click',()=>{if(active){rotation=0;render()}});
   $('back')?.addEventListener('click',()=>{if(active){rotation=Math.PI;render()}});
+  $('spin')?.addEventListener('click',()=>{if(active){rotation+=Math.PI/4;render()}});
+  $('capture')?.addEventListener('click',()=>{if(!active)return;try{const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='ALTERA-avatar-fallback.png';a.click()}catch{}});
   let down=false,x=0;
   canvas.addEventListener('pointerdown',e=>{down=true;x=e.clientX;canvas.setPointerCapture(e.pointerId)});
   canvas.addEventListener('pointerup',()=>down=false);
