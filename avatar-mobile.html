@@ -28,7 +28,46 @@ button{transition:background .12s,border-color .12s}button:focus-visible{outline
  #mobileOverlay{display:block;position:absolute;inset:0;z-index:6;background:#0005}
  .styles{margin-top:9px}.styles h3{font-size:11px}.styleList button{flex-basis:105px;min-height:68px}
 }
-</style><main class="wrap"><header class="head"><div class="logo">♕ ALTERA<small>AVATAR STUDIO</small></div><div class="tabs"><button data-tab="Ansikt" class="active">UTSEENDE</button><button data-tab="Klær">KLÆR</button><button data-tab="Tilbehør">TILBEHØR</button><button data-tab="Tatovering">TATTOO</button></div><div class="tabs"><button id="undo">↶ Angre</button><button id="random">Random</button><button id="save" class="primary">LAGRE</button></div></header><div class="layout"><nav class="panel side" id="side"></nav><section class="panel left"><h3 id="title">Ansikt</h3><div id="editor"></div></section><section class="stage"><div id="mobileTools"><button id="chooseGender" aria-label="Bytt mellom mann og kvinne">♀ / ♂</button><button id="openClothes">Garderobe</button><button id="closePanels">Lukk panel</button></div><div id="mobileOverlay" hidden></div><div class="sceneText">ALTERA · INTERAKTIV 3D<br><span class="muted">Dra for å rotere · dra for å rotere</span></div><canvas id="view"></canvas><div class="err" id="error">3D kunne ikke lastes. Åpne i Safari/Chrome med internett.</div><div class="stageControls"><button id="front">Forfra</button><button id="back">Bakfra</button><button id="spin">Roter</button><button id="capture">Bilde</button></div></section><section class="panel right"><h3>Garderobe</h3><div class="catalog" id="catalog"></div><h3>Farger</h3><div class="swatches" id="colors"></div><p class="muted">Valgene oppdaterer 3D-figuren. Dette er en teknisk 3D-modell, ikke en fotorealistisk avatar ennå.</p></section></div><section class="panel styles"><h3>Mine stiler · ferdige utgangspunkt</h3><div class="styleList" id="presets"></div></section><p class="muted" id="status">ALTERA · Lokal mobiltest</p></main><script>
+
+/* ALTERA mobile reference – navigation, wardrobe and saved styles */
+.mobileBottom{display:none}
+#wardrobeSheet{display:none}
+@media(max-width:700px){
+ body{padding-bottom:78px}
+ .wrap{padding:7px 7px 12px}
+ .head{position:relative;padding:6px 4px 8px}
+ .logo{font-size:clamp(17px,5vw,23px)}
+ .stage{height:65dvh;min-height:430px;max-height:650px}
+ .side{top:88px;width:64px}
+ .side button{min-height:43px}
+ .left,.right{top:88px;left:77px;right:6px}
+ .sceneText{top:13px;left:13px;max-width:54%}
+ .mobileBottom{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:20;align-items:center;justify-content:space-around;background:linear-gradient(180deg,#1e122eea,#0d0818f8);backdrop-filter:blur(16px);border-top:1px solid #b55ca877;padding:9px 5px calc(9px + env(safe-area-inset-bottom))}
+ .mobileBottom button{border:0;background:none;display:grid;gap:3px;place-items:center;min-width:22%;font-size:11px;color:#dbc5e0;padding:5px 2px}
+ .mobileBottom button span{font-size:22px;line-height:1.1}
+ .mobileBottom button.active{color:#ffaff1;text-shadow:0 0 9px #eb67cf}
+ #wardrobeSheet{display:none;position:fixed;z-index:25;left:7px;right:7px;bottom:calc(76px + env(safe-area-inset-bottom));max-height:55dvh;overflow:auto;border:1px solid #c274be;background:#1b112aF5;border-radius:16px;padding:15px;box-shadow:0 0 40px #08030de8}
+ #wardrobeSheet.open{display:block}
+ #wardrobeSheet h3{margin:3px 0 12px;font-size:15px}
+ #wardrobeSheet .savedGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ #wardrobeSheet .savedGrid button{min-height:67px;white-space:normal;text-align:left}
+ #wardrobeSheet .savedGrid button strong{display:block;font-size:12px}
+ #wardrobeSheet .savedGrid button small{display:block;color:#d1b8d6;font-size:10px;margin-top:5px}
+ #wardrobeSheet .sheetHead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+ #wardrobeSheet .sheetHead button{padding:7px 11px}
+}
+</style><main class="wrap"><header class="head"><div class="logo">♕ ALTERA<small>AVATAR STUDIO</small></div><div class="tabs"><button data-tab="Ansikt" class="active">UTSEENDE</button><button data-tab="Klær">KLÆR</button><button data-tab="Tilbehør">TILBEHØR</button><button data-tab="Tatovering">TATTOO</button></div><div class="tabs"><button id="undo">↶ Angre</button><button id="random">Random</button><button id="save" class="primary">LAGRE</button></div></header><div class="layout"><nav class="panel side" id="side"></nav><section class="panel left"><h3 id="title">Ansikt</h3><div id="editor"></div></section><section class="stage"><div id="mobileTools"><button id="chooseGender" aria-label="Bytt mellom mann og kvinne">♀ / ♂</button><button id="openClothes">Garderobe</button><button id="closePanels">Lukk panel</button></div><div id="mobileOverlay" hidden></div><div class="sceneText">ALTERA · INTERAKTIV 3D<br><span class="muted">Dra for å rotere · dra for å rotere</span></div><canvas id="view"></canvas><div class="err" id="error">3D kunne ikke lastes. Åpne i Safari/Chrome med internett.</div><div class="stageControls"><button id="front">Forfra</button><button id="back">Bakfra</button><button id="spin">Roter</button><button id="capture">Bilde</button></div></section><section class="panel right"><h3>Garderobe</h3><div class="catalog" id="catalog"></div><h3>Farger</h3><div class="swatches" id="colors"></div><p class="muted">Valgene oppdaterer 3D-figuren. Dette er en teknisk 3D-modell, ikke en fotorealistisk avatar ennå.</p></section></div><section class="panel styles"><h3>Mine stiler · ferdige utgangspunkt</h3><div class="styleList" id="presets"></div></section><p class="muted" id="status">ALTERA · Lokal mobiltest</p></main>
+<nav class="mobileBottom" aria-label="Mobilnavigasjon">
+<button id="bottomHome" class="active"><span>⌂</span>Hjem</button>
+<button id="bottomStyles"><span>♧</span>Mine stiler</button>
+<button id="bottomFavorites"><span>♡</span>Favoritter</button>
+<button id="bottomShop"><span>♙</span>Butikk</button>
+</nav>
+<aside id="wardrobeSheet" role="dialog" aria-label="Garderobe og stiler" aria-modal="false">
+<div class="sheetHead"><h3 id="sheetTitle">Mine stiler</h3><button id="sheetClose" aria-label="Lukk">✕</button></div>
+<div id="sheetContent"></div>
+</aside>
+<script>
 window.__altera3dReady=false;
 window.addEventListener('error',function(e){if(String(e.message||'').includes('module')||String(e.message||'').includes('WebGL')){const el=document.getElementById('error');if(el)el.style.display='block'}});
 setTimeout(function(){if(!window.__altera3dReady){const el=document.getElementById('error');if(el){el.style.display='block';el.textContent='3D startet ikke. Kontroller nettforbindelse og WebGL, og prøv Safari eller Chrome.'}}},9000);
@@ -57,5 +96,23 @@ $('openClothes').onclick=()=>{section='Klær';ui();panels('right')};
 $('closePanels').onclick=()=>panels(null);overlay.onclick=()=>panels(null);
 nav.addEventListener('click',e=>{if(e.target.closest('button'))panels('left')});
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{if(window.matchMedia('(max-width:700px)').matches)panels(b.dataset.tab==='Klær'?'right':'left')}));
+
+
+const sheet=$('wardrobeSheet'),sheetTitle=$('sheetTitle'),sheetContent=$('sheetContent');
+const savedKey='altera_saved_styles_v1',favoriteKey='altera_favorite_styles_v1';
+const readArray=k=>{try{const v=JSON.parse(localStorage.getItem(k)||'[]');return Array.isArray(v)?v:[]}catch{return []}};
+function setArray(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch{$('status').textContent='Lagring er ikke tilgjengelig';return false}}
+function sheetOpen(title){sheetTitle.textContent=title;sheet.classList.add('open');sheetContent.replaceChildren()}
+function sheetClose(){sheet.classList.remove('open')}
+$('sheetClose').onclick=sheetClose;
+function saveNamed(){const list=readArray(savedKey);const name='Stil '+(list.length+1);list.push({name,avatar:{...s}});if(list.length>12)list.shift();if(setArray(savedKey,list)){$('status').textContent=name+' lagret';renderStyles()}}
+function renderStyles(){sheetOpen('Mine stiler');const top=document.createElement('div');top.className='actions';const saveBtn=btn('＋ Lagre nåværende stil',false,saveNamed);top.append(saveBtn);sheetContent.append(top);const grid=document.createElement('div');grid.className='savedGrid';grid.style.marginTop='12px';const list=readArray(savedKey);if(!list.length){const p=document.createElement('p');p.className='muted';p.textContent='Ingen lagrede stiler ennå. Trykk på lagre-knappen.';sheetContent.append(p)}list.forEach((item,index)=>{const b=document.createElement('button');const strong=document.createElement('strong');strong.textContent=item.name;const small=document.createElement('small');small.textContent=[item.avatar.gender,item.avatar.top,item.avatar.bottom].join(' · ');b.append(strong,small);b.onclick=()=>{change({...item.avatar});sheetClose()};grid.append(b)});sheetContent.append(grid)}
+function renderFavorites(){sheetOpen('Favoritter');const grid=document.createElement('div');grid.className='savedGrid';const favorites=readArray(favoriteKey);const list=readArray(savedKey);const current=JSON.stringify(s);const add=btn('♡ Legg til nåværende avatar',false,()=>{const f=readArray(favoriteKey);f.push({name:'Favoritt '+(f.length+1),avatar:{...s}});setArray(favoriteKey,f.slice(-12));renderFavorites()});sheetContent.append(add);if(!favorites.length){const p=document.createElement('p');p.className='muted';p.textContent='Ingen favoritter lagret.';sheetContent.append(p)}favorites.forEach(item=>{const b=btn(item.name+' · '+item.avatar.top,false,()=>{change({...item.avatar});sheetClose()});grid.append(b)});sheetContent.append(grid)}
+function renderShop(){sheetOpen('Butikk · forhåndsvisning');const p=document.createElement('p');p.className='muted';p.textContent='Klesbutikk med ekte varekatalog og kjøp er ikke aktivert. Her kan du foreløpig prøve de tilgjengelige plaggene på avataren.';sheetContent.append(p);const b=btn('Åpne garderobe',true,()=>{sheetClose();section='Klær';ui();panels('right')});sheetContent.append(b)}
+function setBottom(active){for(const id of ['bottomHome','bottomStyles','bottomFavorites','bottomShop'])$(id).classList.toggle('active',id===active)}
+$('bottomHome').onclick=()=>{sheetClose();panels(null);setBottom('bottomHome')};
+$('bottomStyles').onclick=()=>{renderStyles();setBottom('bottomStyles')};
+$('bottomFavorites').onclick=()=>{renderFavorites();setBottom('bottomFavorites')};
+$('bottomShop').onclick=()=>{renderShop();setBottom('bottomShop')};
 
 </script></html>
