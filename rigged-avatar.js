@@ -107,6 +107,7 @@ export function setupRiggedAvatar(T, scene, prototype, change, getState = () => 
     model.traverse(object => {
       if (!object.isMesh) return;
       const label = object.name + ' ' + (Array.isArray(object.material) ? object.material.map(m=>m?.name).join(' ') : object.material?.name || '');
+      object.castShadow=true;object.receiveShadow=true;
       const declared=object.userData?.alteraSlot;
       if (declared && editable.has(declared)) { editable.get(declared).push(object); return; }
       for (const [slot,pattern] of Object.entries(slotAliases)) {
@@ -144,9 +145,9 @@ export function setupRiggedAvatar(T, scene, prototype, change, getState = () => 
     });
     return changed;
   }
-  const garmentNames={top:{'T-skjorte':'tshirt','Langermet':'long'},bottom:{Jeans:'jeans',Shorts:'shorts'},shoes:{Skinnsko:'leather',Sneakers:'sneakers'}};
+  const garmentNames={hair:{Oppsatt:'bun',Kort:'short'},top:{'Crop top':'crop','T-skjorte':'tshirt','Langermet':'long'},bottom:{Cargo:'cargo',Jeans:'jeans',Shorts:'shorts'},shoes:{Skinnsko:'leather',Sneakers:'sneakers'}};
   function setWardrobe(slot,label) {
-    const variant=garmentNames[slot]?.[label] || {top:'long',bottom:'jeans',shoes:'leather'}[slot];
+    const variant=garmentNames[slot]?.[label] || {hair:'short',top:'long',bottom:'jeans',shoes:'leather'}[slot];
     if(!builder || !variant) return false;
     for(const mesh of editable.get(slot)||[]) {
       const id=mesh.userData.alteraVariant || mesh.name.split('_').slice(1).join('_');
@@ -166,7 +167,7 @@ export function setupRiggedAvatar(T, scene, prototype, change, getState = () => 
     setMorph('BodyWide',Math.max(0,(body-1)/.25));
     setMorph('GenderFemale',state.gender==='Kvinne'?1:0);
     setMorph('BodyMuscular',Number.isFinite(state.muscle)?state.muscle:0);
-    for(const slot of ['top','bottom','shoes'])setWardrobe(slot,state[slot]);
+    for(const slot of ['hair','top','bottom','shoes'])setWardrobe(slot,state[slot==='hair'?'hairStyle':slot]);
     if(report){Object.assign(report,inspectHumanoid(root,clips));showReport(report);}
   }
   function play(type) {
@@ -235,11 +236,11 @@ export function setupRiggedAvatar(T, scene, prototype, change, getState = () => 
     change({gender:'Mann'}); if(!builder)load('assets/avatar-man.glb');
   };
   document.getElementById('glbMpfb')?.addEventListener('click', () => {
-    change({gender:'Mann',top:'Langermet',bottom:'Jeans',shoes:'Skinnsko',body:1,muscle:0,hairStyle:'Kort',modelMode:'builder'});
+    change({gender:'Kvinne',top:'Crop top',bottom:'Cargo',shoes:'Sneakers',body:1,muscle:0,hairStyle:'Oppsatt',modelMode:'builder'});
     awaitBuilder();
   });
   async function awaitBuilder() {
-    await load('assets/characters/mpfb-builder-v1/avatar.glb?v=1');
+    await load('assets/characters/mpfb-builder-v1/avatar.glb?v=2');
     change({});
   }
   document.getElementById('glbReset').onclick = () => {
@@ -270,6 +271,8 @@ export function setupRiggedAvatar(T, scene, prototype, change, getState = () => 
     hasModel: () => !!root
   };
 }
+
+
 
 
 

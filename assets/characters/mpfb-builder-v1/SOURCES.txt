@@ -1,11 +1,46 @@
-ALTERA MPFB builder v1
+ALTERA avatar builder — reference outfit revision 2, 2026-10-14
 
-Published with the user's explicit authorization on 2026-10-14.
-Graphics source: MakeHuman system core assets and MPFB 2.0.18 bundled base mesh, macro targets and game_engine rig.
-The selected graphical assets are declared CC0 in the bundled license and source asset headers.
-Original project: https://static.makehumancommunity.org/
-MPFB license text is included in MPFB-LICENSE.txt. MPFB application source is GPL; no MPFB application code is embedded in the GLB.
+The generated avatar combines CC0 and Creative Commons Attribution assets.
+The combined GLB must retain these credits; it must not be described as wholly CC0.
 
-ALTERA modifications: fitted body/garment morphs, separate long-sleeve/T-shirt and jeans/shorts variants, skin weights, procedural Idle/Walk, coverage masking, texture resizing and opacity corrections.
-Available outfits require both a top and a bottom. Covered body surfaces are culled; revealing new garments require revised coverage.
-Only this generated avatar and its license/provenance are being published; the original 73 asset packages, raw ZIPs and Blender source are excluded.
+Sleeveless Crop Top — punkduck — Creative Commons Attribution 3.0.
+License: https://creativecommons.org/licenses/by/3.0/
+Source: http://www.makehumancommunity.org/node/925
+Evidence: source .mhclo explicitly states CC BY 3.0; shirts03 pack agrees on CC-BY.
+
+Comfortable Sneakers — punkduck — Creative Commons Attribution 3.0.
+License: https://creativecommons.org/licenses/by/3.0/
+Source: http://www.makehumancommunity.org/node/438
+Evidence: source .mhclo explicitly states CC BY 3.0; shoes02 pack agrees on CC-BY.
+
+Elvs Braid Bun — Elvaerwyn — Creative Commons Attribution (CC-BY).
+Source: http://www.makehumancommunity.org/node/2177
+Evidence: source .mhclo and hair02 pack both state CC-BY, without a version number.
+Version is preserved as unspecified, rather than invented. Attribution, source and
+modification notices are included. Community guidance:
+https://static.makehumancommunity.org/oldsite/faq/what_do_i_need_to_do_when_i_use_a_ccby_asset.html
+
+Cargo Pants — Cortu Johnstone (Cortu) — CC0.
+Source: http://www.makehumancommunity.org/node/2798
+Evidence: .mhclo and .mhmat explicitly state CC0; pants01 pack agrees.
+
+Light Skin With Natural Makeup — MargaretToigo — CC0.
+Source: http://www.makehumancommunity.org/node/1125
+Evidence: skins01 metadata states CC0; no conflicting license in selected files.
+
+Base mesh, macro targets, game_engine rig, eyes, short hair, eyelashes, teeth,
+tongue, long-sleeve/jeans outfit and leather shoes:
+MakeHuman system core assets / MPFB 2.0.18 graphical data — CC0.
+Core assets explicitly released CC0 in September 2020; source headers preserve
+Data Collection AB, Joel Palmius and Jonas Hauquier credits.
+Project: https://static.makehumancommunity.org/
+Core license: MPFB-LICENSE.txt. MPFB application code is GPL and is not embedded
+in this GLB. Core licensing does not override community asset licenses.
+
+ALTERA modifications: fitted body and garment morphs, separate wardrobe slots,
+looser cargo silhouette, skin weights, procedural Idle/Walk, coverage masking
+that preserves the midriff, PBR adjustments, texture resizing and alpha corrections.
+Source graphics have been adapted and combined.
+
+Selected generated graphics are published with the user's explicit authorization.
+Raw ZIP packages, Blender source and supplied reference images are excluded.
