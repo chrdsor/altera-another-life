@@ -2,3 +2,5 @@
 .stageHint{bottom:auto;top:37px;text-align:left;padding-left:20px}@media(max-width:700px){.stageHint{top:32px;padding-left:14px}}
 
 #view{height:calc(100% - 48px)}.stageControls{bottom:10px}@media(max-width:700px){.stageHint{max-width:140px;line-height:1.4}}
+
+#view{height:calc(100% - 56px)}.stageControls{bottom:8px}.stageControls button{min-height:40px}@media(max-width:700px){.stageControls{gap:5px}.stageControls button{padding:8px 10px}}

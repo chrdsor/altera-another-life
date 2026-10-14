@@ -266,6 +266,15 @@ export function setupRiggedAvatar(T, scene, prototype, change, getState = () => 
     recolor,
     setMorph,
     applyState,
+    faceFocus:()=>{
+      if(!root)return null;
+      root.updateMatrixWorld(true);
+      const skin=editable.get('skin')?.[0];
+      if(!skin)return new T.Vector3(0,2.55,0);
+      // Use the visible morphed surface; the shared rig's head joint keeps its rest height.
+      const bounds=new T.Box3().setFromObject(skin,true);
+      return new T.Vector3((bounds.min.x+bounds.max.x)/2,bounds.max.y-.2,0);
+    },
     isBuilder:()=>builder,
     loadBuilder:awaitBuilder,
     hasModel: () => !!root
