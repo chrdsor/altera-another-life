@@ -1,0 +1,87 @@
+{
+  "id": "altera-hero-001",
+  "version": "1.0.0",
+  "displayName": "ALTERA Hero 01",
+  "role": "female hero character and visual benchmark",
+  "status": "specification-only",
+  "model": {
+    "uri": "assets/characters/hero-001/hero-001.glb",
+    "available": false,
+    "unit": "meter",
+    "upAxis": "Y",
+    "forwardAxis": "-Z",
+    "heightMeters": 1.72,
+    "neutralPose": "A-pose",
+    "skeleton": "ALTERA-Humanoid-v1",
+    "rigCompatibility": "pending-validation"
+  },
+  "visual": {
+    "agePresentation": "adult",
+    "direction": "photorealistic contemporary urban fashion, premium night-time editorial lighting",
+    "reference": "user-provided ALTERA mobile Avatar Studio concept",
+    "face": {
+      "geometry": "real facial mesh with natural eyelids, lips, nose and ears",
+      "requiredBlendshapes": [
+        "jawOpen",
+        "eyeBlinkLeft",
+        "eyeBlinkRight",
+        "mouthSmileLeft",
+        "mouthSmileRight"
+      ],
+      "skin": "PBR albedo, normal, roughness; no baked neon highlights"
+    },
+    "hair": {
+      "style": "messy high bun with loose strands",
+      "geometry": "hair cards or strands with LOD",
+      "color": "warm dark blonde"
+    },
+    "outfit": {
+      "top": "fitted black crop tank",
+      "bottom": "black cargo trousers with sewn pockets",
+      "shoes": "off-white sneakers",
+      "accessories": [
+        "small hoop earrings",
+        "layered necklace",
+        "optional tattoo decal"
+      ]
+    },
+    "proportions": "anatomically plausible, natural hands and feet; avoid spheres, cylinders and disconnected limbs"
+  },
+  "technical": {
+    "rig": "humanoid skeleton with named bones, skinned meshes and consistent bind pose",
+    "animationClips": [
+      "Idle",
+      "Walk"
+    ],
+    "lod": [
+      {
+        "id": "mobile",
+        "maxTriangles": 35000,
+        "textureMax": 1024
+      },
+      {
+        "id": "desktop",
+        "maxTriangles": 85000,
+        "textureMax": 2048
+      }
+    ],
+    "mobileTarget": "30 FPS on a representative mid-range iPhone",
+    "materials": "PBR metallic-roughness, sRGB color textures, linear normals",
+    "format": "GLB 2.0",
+    "targetFileSizeMB": 20
+  },
+  "acceptance": [
+    "Model loads in Safari iPhone and desktop browser",
+    "No disconnected limbs, obvious clipping or placeholder primitives",
+    "Face, hair, clothes visually close to supplied reference direction",
+    "Idle and Walk work with shared rig",
+    "Separate clothing meshes are skinned to skeleton",
+    "LOD variants preserve identity and silhouette",
+    "Commercial asset license verified"
+  ],
+  "notes": [
+    "Reference screenshot is a design target, not a model asset.",
+    "No actual GLB model or textures have been created by this specification.",
+    "Body Studio and wardrobe controls cannot modify this character until morph targets and compatible garments are delivered."
+  ]
+}
