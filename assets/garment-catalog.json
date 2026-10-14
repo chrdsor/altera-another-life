@@ -1,0 +1,181 @@
+{
+  "version": "0.1.0",
+  "purpose": "ALTERA shared garment catalog for PC and mobile",
+  "skeleton": "ALTERA-Humanoid-v1",
+  "units": "meters",
+  "assetsStatus": "awaiting licensed GLB meshes",
+  "bodyProfiles": [
+    {
+      "id": "woman-base",
+      "asset": "assets/avatar-woman.glb",
+      "status": "pending"
+    },
+    {
+      "id": "man-base",
+      "asset": "assets/avatar-man.glb",
+      "status": "pending"
+    }
+  ],
+  "garments": [
+    {
+      "id": "quarterzip-beige",
+      "name": "Beige half-zip",
+      "category": "midlayer",
+      "style": [
+        "smart-casual",
+        "classic"
+      ],
+      "season": [
+        "spring",
+        "autumn",
+        "winter"
+      ],
+      "slot": "torso",
+      "fit": [
+        "regular",
+        "relaxed"
+      ],
+      "materials": [
+        "knit"
+      ],
+      "variants": [
+        {
+          "id": "beige",
+          "color": "#C7AE8E"
+        }
+      ],
+      "asset": "assets/garments/quarterzip-beige.glb",
+      "status": "pending"
+    },
+    {
+      "id": "jeans-dark",
+      "name": "Mørke jeans",
+      "category": "bottom",
+      "style": [
+        "classic",
+        "streetwear"
+      ],
+      "season": [
+        "all"
+      ],
+      "slot": "legs",
+      "fit": [
+        "slim",
+        "straight",
+        "relaxed"
+      ],
+      "materials": [
+        "denim"
+      ],
+      "variants": [
+        {
+          "id": "indigo",
+          "color": "#24334B"
+        }
+      ],
+      "asset": "assets/garments/jeans-dark.glb",
+      "status": "pending"
+    },
+    {
+      "id": "trousers-tailored",
+      "name": "Dressbukse",
+      "category": "bottom",
+      "style": [
+        "business",
+        "classic"
+      ],
+      "season": [
+        "all"
+      ],
+      "slot": "legs",
+      "fit": [
+        "straight",
+        "wide"
+      ],
+      "materials": [
+        "wool-blend"
+      ],
+      "variants": [
+        {
+          "id": "charcoal",
+          "color": "#333039"
+        }
+      ],
+      "asset": "assets/garments/trousers-tailored.glb",
+      "status": "pending"
+    },
+    {
+      "id": "parka-winter",
+      "name": "Vinterparkas",
+      "category": "outerwear",
+      "style": [
+        "outdoor",
+        "casual"
+      ],
+      "season": [
+        "winter"
+      ],
+      "slot": "outer",
+      "fit": [
+        "regular",
+        "relaxed"
+      ],
+      "materials": [
+        "technical"
+      ],
+      "variants": [
+        {
+          "id": "black",
+          "color": "#202128"
+        }
+      ],
+      "asset": "assets/garments/parka-winter.glb",
+      "status": "pending"
+    },
+    {
+      "id": "swimshorts",
+      "name": "Badeshorts",
+      "category": "bottom",
+      "style": [
+        "beach"
+      ],
+      "season": [
+        "summer"
+      ],
+      "slot": "legs",
+      "fit": [
+        "regular"
+      ],
+      "materials": [
+        "swim"
+      ],
+      "variants": [
+        {
+          "id": "navy",
+          "color": "#213C5D"
+        }
+      ],
+      "asset": "assets/garments/swimshorts.glb",
+      "status": "pending"
+    }
+  ],
+  "rules": {
+    "riggedMesh": true,
+    "shareSkeleton": true,
+    "hideOccludedBodyParts": true,
+    "bodyMorphTargets": [
+      "waist",
+      "chest",
+      "hips",
+      "shoulders"
+    ],
+    "lods": [
+      "mobile",
+      "desktop"
+    ],
+    "textureColorSpace": "sRGB",
+    "textureCompression": "KTX2 recommended",
+    "normalMap": "optional",
+    "collision": "gameplay separate"
+  }
+}
