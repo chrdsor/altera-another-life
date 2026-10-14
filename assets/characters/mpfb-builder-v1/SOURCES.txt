@@ -1,0 +1,11 @@
+ALTERA MPFB builder v1
+
+Published with the user's explicit authorization on 2026-10-14.
+Graphics source: MakeHuman system core assets and MPFB 2.0.18 bundled base mesh, macro targets and game_engine rig.
+The selected graphical assets are declared CC0 in the bundled license and source asset headers.
+Original project: https://static.makehumancommunity.org/
+MPFB license text is included in MPFB-LICENSE.txt. MPFB application source is GPL; no MPFB application code is embedded in the GLB.
+
+ALTERA modifications: fitted body/garment morphs, separate long-sleeve/T-shirt and jeans/shorts variants, skin weights, procedural Idle/Walk, coverage masking, texture resizing and opacity corrections.
+Available outfits require both a top and a bottom. Covered body surfaces are culled; revealing new garments require revised coverage.
+Only this generated avatar and its license/provenance are being published; the original 73 asset packages, raw ZIPs and Blender source are excluded.

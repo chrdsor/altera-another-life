@@ -1,0 +1,4 @@
+# Private avatar testing assets require explicit approval before publication.
+/assets/local-test/
+*.blend
+*.blend1
