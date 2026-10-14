@@ -89,12 +89,8 @@ export function setupRiggedAvatar(T, scene, prototype, change) {
     mixer = null; clips = []; action = null; report = null; editable.clear();
     if (root) {
       group.remove(root);
-      root.traverse(o => {
-        if (!o.isMesh) return;
-        o.geometry?.dispose();
-        const mats = Array.isArray(o.material) ? o.material : [o.material];
-        mats.forEach(m => m?.dispose());
-      });
+      // GLTFLoader manages shared geometry/material references; do not dispose here.
+      // Recolor clones are disposed when replaced; original assets may be reused.
       root = null;
     }
     if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; }
@@ -119,13 +115,16 @@ export function setupRiggedAvatar(T, scene, prototype, change) {
     if (!root || !targets.length) return {changed:0,reason:'Ingen navngitte '+slot+'-mesher i importert GLB'};
     for (const mesh of targets) {
       if (!mesh.userData.alteraOriginalMaterials) mesh.userData.alteraOriginalMaterials=mesh.material;
-      const original=Array.isArray(mesh.material)?mesh.material:[mesh.material];
+      const previous=mesh.material;
+      const original=Array.isArray(mesh.userData.alteraOriginalMaterials)?mesh.userData.alteraOriginalMaterials:[mesh.userData.alteraOriginalMaterials];
       const recolored=original.map(material=>{
         const m=material.clone();
         if (m.color) m.color.set(color);
         return m;
       });
-      mesh.material=Array.isArray(mesh.material)?recolored:recolored[0];
+      mesh.material=Array.isArray(previous)?recolored:recolored[0];
+      const previousMaterials=Array.isArray(previous)?previous:[previous];
+      previousMaterials.forEach(m=>{if(m && !original.includes(m))m.dispose()});
     }
     return {changed:targets.length};
   }
