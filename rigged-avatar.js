@@ -45,6 +45,8 @@ export function setupRiggedAvatar(T, scene, prototype, change) {
   const loader = new GLTFLoader(), clock = new T.Clock();
   let root = null, mixer = null, clips = [], action = null;
   let objectUrl = null, request = 0, report = null;
+  const slotAliases = {top:/top|shirt|hoodie|jacket|sweater|blouse|upper|torso_cloth/i,bottom:/pants|trousers|jeans|skirt|shorts|lower_cloth/i,shoes:/shoe|sneaker|boot|footwear/i,hair:/hair|fringe|bangs/i};
+  const editable = new Map();
   const status = document.getElementById('glbStatus');
   const diagnostics = document.getElementById('glbDiagnostics');
   const say = message => { if (status) status.textContent = message; };
@@ -59,7 +61,8 @@ export function setupRiggedAvatar(T, scene, prototype, change) {
       ['Knokler', result.bones.length],
       ['Trekanter', result.triangles.toLocaleString('nb-NO')],
       ['Materialer', result.materials],
-      ['Animasjoner', result.animationNames.join(', ') || 'Ingen']
+      ['Animasjoner', result.animationNames.join(', ') || 'Ingen'],
+      ['Plaggmesher', result.editableSlots ? Object.entries(result.editableSlots).map(([k,v])=>k+': '+v).join(' · ') : 'Ikke analysert']
     ];
     for (const [label, value] of rows) {
       const row = document.createElement('div');
@@ -83,7 +86,7 @@ export function setupRiggedAvatar(T, scene, prototype, change) {
 
   function clear() {
     if (mixer) { mixer.stopAllAction(); if (root) mixer.uncacheRoot(root); }
-    mixer = null; clips = []; action = null; report = null;
+    mixer = null; clips = []; action = null; report = null; editable.clear();
     if (root) {
       group.remove(root);
       root.traverse(o => {
@@ -99,6 +102,43 @@ export function setupRiggedAvatar(T, scene, prototype, change) {
     showReport(null);
   }
 
+  function indexSlots(model) {
+    editable.clear();
+    for (const key of Object.keys(slotAliases)) editable.set(key,[]);
+    model.traverse(object => {
+      if (!object.isMesh) return;
+      const label = object.name + ' ' + (Array.isArray(object.material) ? object.material.map(m=>m?.name).join(' ') : object.material?.name || '');
+      for (const [slot,pattern] of Object.entries(slotAliases)) {
+        if (pattern.test(label)) { editable.get(slot).push(object); break; }
+      }
+    });
+    return Object.fromEntries([...editable.entries()].map(([k,v])=>[k,v.length]));
+  }
+  function recolor(slot, color) {
+    const targets=editable.get(slot)||[];
+    if (!root || !targets.length) return {changed:0,reason:'Ingen navngitte '+slot+'-mesher i importert GLB'};
+    for (const mesh of targets) {
+      if (!mesh.userData.alteraOriginalMaterials) mesh.userData.alteraOriginalMaterials=mesh.material;
+      const original=Array.isArray(mesh.material)?mesh.material:[mesh.material];
+      const recolored=original.map(material=>{
+        const m=material.clone();
+        if (m.color) m.color.set(color);
+        return m;
+      });
+      mesh.material=Array.isArray(mesh.material)?recolored:recolored[0];
+    }
+    return {changed:targets.length};
+  }
+  function setMorph(name,weight) {
+    if (!root) return 0;
+    let changed=0;
+    root.traverse(object=>{
+      if (!object.isMesh || !object.morphTargetDictionary || !object.morphTargetInfluences) return;
+      const idx=object.morphTargetDictionary[name];
+      if (idx!==undefined){object.morphTargetInfluences[idx]=Math.max(0,Math.min(1,weight));changed++}
+    });
+    return changed;
+  }
   function play(type) {
     if (!mixer || !clips.length) { say('Modellen inneholder ingen animasjonsklipp.'); return; }
     const pattern = type === 'walk' ? /walk|run|locomotion/i : /idle|stand|breath/i;
@@ -134,6 +174,7 @@ export function setupRiggedAvatar(T, scene, prototype, change) {
       prototype.visible = false;
       clips = gltf.animations || [];
       report = inspected;
+      report.editableSlots=indexSlots(model);
       showReport(report);
       if (clips.length) {
         mixer = new T.AnimationMixer(model);
@@ -173,6 +214,9 @@ export function setupRiggedAvatar(T, scene, prototype, change) {
       const dt = Math.min(clock.getDelta(), .08);
       mixer?.update(dt);
     },
-    inspect: () => report
+    inspect: () => report,
+    recolor,
+    setMorph,
+    hasModel: () => !!root
   };
 }
