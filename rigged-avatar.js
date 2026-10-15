@@ -182,8 +182,10 @@ export function setupRiggedAvatar(T, scene, prototype, change, getState = () => 
     const pattern = type === 'walk' ? /walk|run|locomotion/i : /idle|stand|breath/i;
     const clip = clips.find(c => pattern.test(c.name)) ||
       clips[type === 'walk' ? Math.min(1, clips.length - 1) : 0];
+    const next = mixer.clipAction(clip);
+    if (action === next && next.isRunning()) return;
     action?.fadeOut(.2);
-    action = mixer.clipAction(clip);
+    action = next;
     action.reset().fadeIn(.2).play();
     say('Spiller animasjon: ' + clip.name);
   }
