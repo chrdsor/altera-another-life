@@ -121,6 +121,8 @@ export function setupRiggedAvatar(T, scene, prototype, change, getState = () => 
     const targets=editable.get(actualSlot)||[];
     if (!root || !targets.length) return {changed:0,reason:'Ingen navngitte '+slot+'-mesher i importert GLB'};
     for (const mesh of targets) {
+      // Avoid reallocating GPU materials for every body, outfit or camera update.
+      if (mesh.userData.alteraAppliedColor === color) continue;
       if (!mesh.userData.alteraOriginalMaterials) mesh.userData.alteraOriginalMaterials=mesh.material;
       const previous=mesh.material;
       const original=Array.isArray(mesh.userData.alteraOriginalMaterials)?mesh.userData.alteraOriginalMaterials:[mesh.userData.alteraOriginalMaterials];
@@ -130,6 +132,7 @@ export function setupRiggedAvatar(T, scene, prototype, change, getState = () => 
         return m;
       });
       mesh.material=Array.isArray(previous)?recolored:recolored[0];
+      mesh.userData.alteraAppliedColor=color;
       const previousMaterials=Array.isArray(previous)?previous:[previous];
       previousMaterials.forEach(m=>{if(m && !original.includes(m))m.dispose()});
     }
@@ -149,7 +152,11 @@ export function setupRiggedAvatar(T, scene, prototype, change, getState = () => 
   function setWardrobe(slot,label) {
     const variant=garmentNames[slot]?.[label] || {hair:'short',top:'long',bottom:'jeans',shoes:'leather'}[slot];
     if(!builder || !variant) return false;
-    for(const mesh of editable.get(slot)||[]) {
+    const meshes=editable.get(slot)||[];
+    // Do not hide an entire wardrobe category when the requested asset is absent.
+    const available=meshes.some(mesh=>(mesh.userData.alteraVariant || mesh.name.split('_').slice(1).join('_'))===variant);
+    if(!available)return false;
+    for(const mesh of meshes) {
       const id=mesh.userData.alteraVariant || mesh.name.split('_').slice(1).join('_');
       mesh.visible=id===variant;
     }
