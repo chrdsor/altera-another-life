@@ -1,0 +1,11 @@
+import {SCHEMA_VERSION,validateParcel,validateWorldCommand,validateLedgerTransfer,DISTRICT_01_SEED} from './world-domain.js';
+const assert=(ok,msg)=>{if(!ok)throw new Error(msg)};
+assert(SCHEMA_VERSION===1,'schema version');
+assert(DISTRICT_01_SEED.id==='district_01','seed');
+assert(validateParcel({id:'parcel_001',districtId:'district_01',ownerId:null,areaM2:250,zone:'residential'}).length===0,'valid parcel');
+assert(validateParcel({id:'x',districtId:'district_01',ownerId:null,areaM2:-1,zone:'unknown'}).length>=2,'invalid parcel');
+assert(validateWorldCommand({version:1,commandId:'cmd_001',actorId:'player_001',type:'place_furniture',payload:{itemId:'chair_001'}}).length===0,'valid command');
+assert(validateWorldCommand({version:1,commandId:'cmd_001',actorId:'player_001',type:'mint_money',payload:{}}).length>0,'reject unknown command');
+assert(validateLedgerTransfer({fromAccount:'player_001',toAccount:'store_001',amountMinor:100,transactionId:'txn_001'}).length===0,'valid transfer');
+assert(validateLedgerTransfer({fromAccount:'player_001',toAccount:'player_001',amountMinor:0.5,transactionId:'txn_001'}).length>0,'reject invalid transfer');
+console.log('ALTERA domain contract checks passed');
