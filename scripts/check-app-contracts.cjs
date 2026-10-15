@@ -11,6 +11,7 @@ const worldHtml=read('world.html');
 const worldJs=read('world.js');
 const cityHtml=read('city.html');
 const cityJs=read('city.js');
+const cityStateJs=read('city-state.js');
 
 function ids(html){return new Set([...html.matchAll(/\bid=["']([^"']+)["']/g)].map(match=>match[1]))}
 function referencedIds(js){return new Set([...js.matchAll(/\$\('([^']+)'\)|getElementById\('([^']+)'\)/g)].map(match=>match[1]||match[2]))}
@@ -40,10 +41,15 @@ assert(worldJs.includes("altera-world-settings-v1"),'Grafikk- og kameravalg må 
 assert(worldJs.includes("altera-world-progress-v1"),'Oppdagelsesprogresjon må kunne lagres');
 for(const spot of ["id:'portal'","id:'dj'","id:'window'"])assert(worldJs.includes(spot),'Mangler interaksjonspunkt: '+spot);
 assert(worldHtml.includes('id="objectiveProgress"'),'Spillet mangler synlig progresjon');
-assert(cityJs.includes("altera-city-progress-v1"),'Byens oppdagelsesprogresjon må kunne lagres');
+assert(cityStateJs.includes("altera-district-01-state-v2")&&cityJs.includes('saveCityState'),'Byens progresjon må bruke validert District 01-state');
+assert(cityJs.includes("from './city-state.js?v=1'"),'Byen må bruke den testbare distriktsmodulen');
+assert(cityStateJs.includes("from './world-domain.js'"),'Distriktsstate må være koblet til verdensdomenet');
 for(const spot of ["id:'quay'","id:'cafe'","id:'gallery'","id:'transit'"])assert(cityJs.includes(spot),'Mangler bypunkt: '+spot);
 for(const feature of ['buildWaterfront()','buildBoats()','buildPeople()'])assert(cityJs.includes(feature),'Byen mangler levende system: '+feature);
+for(const feature of ['buildLandmarks()','buildTraffic()','buildRain()','new T.InstancedMesh'])assert(cityJs.includes(feature),'Byen mangler bysystem eller ytelsesoptimalisering: '+feature);
+for(const feature of ['cameraRay.intersectObjects','greetNearest','transitReady'])assert(cityJs.includes(feature),'Byen mangler reaktivt spill- eller kamerasystem: '+feature);
 assert(cityHtml.includes('id="objectiveProgress"'),'Byen mangler synlig progresjon');
+assert(cityHtml.includes('id="atmosphere"'),'Byen mangler atmosfærekontroll');
 assert(rigJs.includes("availableOptions"),'Studio må kunne deaktivere plagg som modellen ikke har');
 assert(rigJs.includes("iris|eye_color|pupil"),'Irisfarge må være adskilt fra hornhinne og sclera');
 assert(!rigJs.includes("eyes:/iris|eyeball"),'Hornhinne/øyeball må ikke arve irisfargen');

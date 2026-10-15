@@ -6,7 +6,9 @@
 
 The shared state is normalized in `avatar-state.js` before rendering. Runtime materials, wardrobe choices, morphs and animation actions are shared through `avatar-appearance.js`, so avatar identity remains consistent between spaces. Night Lounge includes three discoverable interaction points. District 01 adds four persistent discoveries across a playable waterfront.
 
-Night Lounge and District 01 are actual Three.js scenes. The city vertical slice includes animated water, moving boats, ambient pedestrians, changing window light, collision, mobile controls and persistent progress. It does not use the supplied concept images as a background or substitute the avatar with a static render.
+District 01 prototype progression is normalized in `city-state.js` and linked to the versioned `world-domain.js` district identity. Completed actions derive reputation and visible world flags instead of trusting arbitrary stored totals. This local state is a prototype convenience only; future property, inventory, currency and social presence must remain server-authoritative.
+
+Night Lounge and District 01 are actual Three.js scenes. The city vertical slice includes animated water, boats, tram traffic, articulated ambient pedestrians, optional rain, four distinct place scenes, collision, mobile controls and persistent progress. Facade windows use instancing to keep draw calls bounded as the street becomes denser. It does not use the supplied concept images as a background or substitute the avatar with a static render.
 
 ## Selected open-source foundation
 
@@ -40,6 +42,8 @@ node --check avatar-studio.js
 node --check rigged-avatar.js
 node --check world.js
 node --check city.js
+node world-domain.test.mjs
+node city-state.test.mjs
 node scripts/check-app-contracts.cjs
 node scripts/check-avatar-state.mjs
 ```
