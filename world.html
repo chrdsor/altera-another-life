@@ -1,1 +1,42 @@
-<!doctype html><html lang="nb"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ALTERA · Utforsk verden</title><style>body{margin:0;background:#10101d;color:white;font:15px system-ui;overflow:hidden}canvas{display:block}header{position:absolute;top:16px;left:16px;z-index:2;background:#161527d9;padding:14px 18px;border:1px solid #ffffff33;border-radius:16px}a{color:#f4b8f1}#hint{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:#161527d9;padding:12px 18px;border-radius:16px;text-align:center;pointer-events:none}#pad{position:absolute;bottom:22px;left:20px;display:grid;grid-template-columns:repeat(3,54px);gap:4px}button{background:#322645cc;border:1px solid #ffffff66;color:white;border-radius:12px;height:50px;font-size:22px;touch-action:none}#pad button:first-child{grid-column:2}#pad button:nth-child(2){grid-column:1}#pad button:nth-child(3){grid-column:2}#pad button:nth-child(4){grid-column:3}@media(pointer:fine){#pad{display:none}}@media(max-width:700px){#hint{bottom:190px;width:max-content;max-width:80%;font-size:12px}}</style><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script></head><body><header><strong>ALTERA · VERDEN</strong><div>Utforsk første 3D-prototype</div><a href="avatar-studio.html">Til karakterbyggeren</a></header><div id="hint">WASD / piltaster for å gå · dra for å se deg rundt</div><div id="pad"><button data-key="KeyW">↑</button><button data-key="KeyA">←</button><button data-key="KeyS">↓</button><button data-key="KeyD">→</button></div><script type="module" src="world.js"></script></body></html>
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#09070d">
+  <meta name="description" content="Utforsk ALTERA-loungen med avataren du har laget.">
+  <title>ALTERA · Night Lounge</title>
+  <link rel="stylesheet" href="world.css?v=1">
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/","rapier":"https://cdn.jsdelivr.net/npm/@dimforge/rapier3d-compat@0.21.0/rapier.es.js"}}</script>
+</head>
+<body>
+  <canvas id="world" aria-label="ALTERA Night Lounge i 3D"></canvas>
+  <div class="loading" id="loading" role="status"><span></span><strong>Åpner Night Lounge</strong><small id="loadingDetail">Starter fysikk og laster avataren din</small></div>
+  <header class="hudTop">
+    <a class="worldBrand" href="index.html" aria-label="ALTERA hjem"><strong>ALTERA</strong><small>NIGHT LOUNGE</small></a>
+    <div class="roomState"><span></span><b>SOLO FORHÅNDSVISNING</b><small>Serverklar arkitektur</small></div>
+    <div class="topActions"><a href="avatar-studio.html">Rediger avatar</a><button id="photo" type="button">Foto</button><button id="settings" type="button" aria-expanded="false">Innstillinger</button></div>
+  </header>
+  <aside class="socialPanel" aria-label="Loungeaktivitet">
+    <div class="panelTabs"><button class="active" type="button">Lounge</button><button type="button" disabled>Venner</button></div>
+    <div class="event"><span class="avatarDot">A</span><p><strong>Velkommen</strong><small>Avataren din er koblet til spillverdenen.</small></p></div>
+    <div class="event"><span class="avatarDot warm">01</span><p><strong>Night Lounge</strong><small>Utforsk rommet og finn lyspunktene.</small></p></div>
+    <div class="chatStub">Flerspillerchat aktiveres med spillserveren.</div>
+  </aside>
+  <div class="location"><span class="eyebrow">ALTERA DISTRICT 01</span><strong id="locationName">Night Lounge</strong><small id="objective">Gå bort til det rosa lyspunktet</small></div>
+  <div class="interaction" id="interaction" hidden><kbd>E</kbd><span id="interactionText">Samhandle</span></div>
+  <nav class="actionBar" aria-label="Spillhandlinger">
+    <button id="wave" type="button"><span>Hei</span><small>Emote</small></button><button id="cameraSide" type="button"><span>Kamera</span><small>Bytt side</small></button><button id="walkToggle" type="button"><span>Gå</span><small>Fast fart</small></button><button id="exit" type="button"><span>Studio</span><small>Endre stil</small></button>
+  </nav>
+  <section class="settingsPanel" id="settingsPanel" hidden aria-label="Spillinnstillinger">
+    <div><h2>Innstillinger</h2><button id="closeSettings" type="button" aria-label="Lukk">×</button></div>
+    <label>Grafikk<select id="quality"><option value="auto">Automatisk</option><option value="high">Høy</option><option value="mobile">Mobil</option></select></label>
+    <label><input id="reduceMotion" type="checkbox"> Reduser kamerabevegelse</label>
+    <p>WASD eller piltaster for å gå. Dra på skjermen for å rotere kameraet.</p>
+  </section>
+  <div class="joystick" id="joystick" aria-label="Beveg avataren"><span></span></div>
+  <button class="mobileAction" id="mobileAction" type="button" hidden>Samhandle</button>
+  <div id="toast" hidden role="status"></div>
+  <script type="module" src="world.js?v=1"></script>
+</body>
+</html>
