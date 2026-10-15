@@ -2,9 +2,11 @@
 
 ## Current vertical slice
 
-`avatar-studio.html` and `world.html` use the same local avatar state (`altera-avatar-reference-v3`) and the same rigged GLB. A player can customize the avatar, enter Night Lounge, move with keyboard or touch controls, and return to the studio without losing the selected body, hair, clothing or colors.
+`avatar-studio.html`, `world.html` and `city.html` use the same local avatar state (`altera-avatar-reference-v3`) and the same rigged GLB. A player can customize the avatar, enter Night Lounge, continue into District 01, move with keyboard or touch controls, and return to the studio without losing the selected body, hair, clothing or colors.
 
-The Night Lounge is an actual Three.js scene. It does not use the supplied concept images as a background or substitute the avatar with a static render.
+The shared state is normalized in `avatar-state.js` before rendering. Runtime materials, wardrobe choices, morphs and animation actions are shared through `avatar-appearance.js`, so avatar identity remains consistent between spaces. Night Lounge includes three discoverable interaction points. District 01 adds four persistent discoveries across a playable waterfront.
+
+Night Lounge and District 01 are actual Three.js scenes. The city vertical slice includes animated water, moving boats, ambient pedestrians, changing window light, collision, mobile controls and persistent progress. It does not use the supplied concept images as a background or substitute the avatar with a static render.
 
 ## Selected open-source foundation
 
@@ -37,8 +39,9 @@ Run:
 node --check avatar-studio.js
 node --check rigged-avatar.js
 node --check world.js
+node --check city.js
 node scripts/check-app-contracts.cjs
-node scripts/check-character-assets.cjs
+node scripts/check-avatar-state.mjs
 ```
 
-Manual browser verification is still required for WebGL rendering, Rapier movement, skinning, animation, morph extremes, mobile touch input, saving and screenshot export.
+The production GLB is hosted with the published project and is not included in this lightweight working copy. Manual browser verification is still required for WebGL rendering, Rapier movement, skinning, animation, morph extremes, mobile touch input, saving and screenshot export.

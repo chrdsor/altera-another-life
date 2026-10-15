@@ -4,3 +4,4 @@
 @media(max-width:390px){.stage{min-height:390px}.categoryRail{grid-template-columns:repeat(5,76px)}.stageControls button{min-width:41px;padding:8px 7px}.controlDivider{display:none}.brand small{display:none}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;scroll-behavior:auto!important}}
 .enterWorld{display:inline-grid;place-items:center;min-width:112px;min-height:42px;padding:9px 18px;border:1px solid #f3a4eb;border-radius:7px;color:#fff!important;text-decoration:none;background:linear-gradient(135deg,#752582,#bc42bd);box-shadow:0 0 22px #ce4ad766;font-weight:700}.saveButton{border-radius:7px;padding:11px 18px}
+.choices button:disabled{cursor:not-allowed;opacity:.38;border-color:#ffffff18;background:#130e18;color:#817786}

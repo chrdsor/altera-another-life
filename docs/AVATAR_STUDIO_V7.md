@@ -13,6 +13,9 @@ Denne revisjonen bruker de innsendte konseptbildene som visuell retning, ikke so
 - Lettvekts 3D-studiomiljø med podium, vinduer og møbelsilhuetter. Referansebildene er ikke inkludert.
 - Utvidet ansiktsstate for øyne, nese, lepper og ansiktsform. Kontrollene kobles automatisk til kompatible morph-navn når de finnes.
 - Materialer gjenbrukes ved fargeendring for å unngå stadig nye materialkloner.
+- Studio og spill bruker nå én validert state-modul. Ugyldige lagringsverdier, farger og ekstreme morphverdier repareres før bruk.
+- Valg som mangler i den aktive GLB-en deaktiveres i Studio, og en trygg synlig plaggvariant beholdes i spillet.
+- Iris kan farges uten at hornhinne og sclera blir tonet.
 - Adaptiv pikselratio og skyggekvalitet på mobile/lavminneenheter.
 - Eksportformat oppdatert til schema version 2; eldre lokalt lagrede valg får trygge standardverdier.
 
@@ -38,6 +41,7 @@ Se `assets/characters/mpfb-builder-v1/SOURCES.txt` for kilder, kreditering og en
 ## Kontrollpunkter
 
 - JavaScript-syntaks: `node --check avatar-studio.js` og `node --check rigged-avatar.js`.
+- Statevalidering: `node scripts/check-avatar-state.mjs`.
 - Alle JavaScript-refererte element-ID-er finnes i HTML.
 - Mobilbredder: 390, 430 og 760 px.
 - Desktopbredder: 1280, 1440 og 1920 px.

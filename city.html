@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#071019">
+  <meta name="description" content="Utforsk ALTERA District 01 med avataren din.">
+  <title>ALTERA · District 01</title>
+  <link rel="stylesheet" href="city.css?v=1">
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/","rapier":"https://cdn.jsdelivr.net/npm/@dimforge/rapier3d-compat@0.21.0/rapier.es.js"}}</script>
+</head>
+<body>
+  <canvas id="city" aria-label="ALTERA District 01 i 3D"></canvas>
+  <div class="loading" id="loading" role="status"><span></span><strong>Åpner District 01</strong><small id="loadingDetail">Byen våkner</small></div>
+  <header class="hudTop">
+    <a class="worldBrand" href="index.html" aria-label="ALTERA hjem"><strong>ALTERA</strong><small>DISTRICT 01</small></a>
+    <div class="cityStatus"><i></i><span><b>BYEN ER LIVE</b><small id="cityTime">Blåtime · 18:42</small></span></div>
+    <div class="topActions"><a href="world.html">Night Lounge</a><a href="avatar-studio.html">Studio</a><button id="photo" type="button">Foto</button><button id="settings" type="button" aria-expanded="false">Innstillinger</button></div>
+  </header>
+  <div class="location"><span class="eyebrow">ALTERA WATERFRONT</span><strong id="locationName">Sjøpromenaden</strong><small id="objective">Oppdag District 01 · 0/4</small><div class="objectiveTrack" aria-hidden="true"><i id="objectiveProgress"></i></div></div>
+  <aside class="pulsePanel" aria-label="Bypuls">
+    <header><b>BYLIVE</b><span id="population">12 i nærheten</span></header>
+    <p><i class="live"></i><span><strong>Kveldsåpent ved Kaien</strong><small>Lysinstallasjonen starter snart</small></span></p>
+    <p><i></i><span><strong>Linje 01</strong><small>Neste avgang om 2 min</small></span></p>
+  </aside>
+  <div class="interaction" id="interaction" hidden><kbd>E</kbd><span id="interactionText">Samhandle</span></div>
+  <nav class="actionBar" aria-label="Spillhandlinger">
+    <button id="wave" type="button"><span>Hei</span><small>Emote</small></button><button id="cameraSide" type="button"><span>Kamera</span><small>Bytt side</small></button><button id="walkToggle" type="button"><span>Gå</span><small>Fast fart</small></button><button id="lounge" type="button"><span>Lounge</span><small>Gå inn</small></button>
+  </nav>
+  <section class="settingsPanel" id="settingsPanel" hidden aria-label="Spillinnstillinger">
+    <div><h2>Innstillinger</h2><button id="closeSettings" type="button" aria-label="Lukk">×</button></div>
+    <label>Grafikk<select id="quality"><option value="auto">Automatisk</option><option value="high">Høy</option><option value="mobile">Mobil</option></select></label>
+    <label><input id="reduceMotion" type="checkbox"> Reduser kamerabevegelse</label>
+    <p>WASD eller piltaster for å gå. Dra for å rotere kameraet.</p>
+  </section>
+  <div class="joystick" id="joystick" aria-label="Beveg avataren"><span></span></div>
+  <button class="mobileAction" id="mobileAction" type="button" hidden>Samhandle</button>
+  <div id="toast" hidden role="status"></div>
+  <script type="module" src="city.js?v=1"></script>
+</body>
+</html>

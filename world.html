@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#09070d">
   <meta name="description" content="Utforsk ALTERA-loungen med avataren du har laget.">
   <title>ALTERA · Night Lounge</title>
-  <link rel="stylesheet" href="world.css?v=1">
+  <link rel="stylesheet" href="world.css?v=3">
   <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/","rapier":"https://cdn.jsdelivr.net/npm/@dimforge/rapier3d-compat@0.21.0/rapier.es.js"}}</script>
 </head>
 <body>
@@ -15,7 +15,7 @@
   <header class="hudTop">
     <a class="worldBrand" href="index.html" aria-label="ALTERA hjem"><strong>ALTERA</strong><small>NIGHT LOUNGE</small></a>
     <div class="roomState"><span></span><b>SOLO FORHÅNDSVISNING</b><small>Serverklar arkitektur</small></div>
-    <div class="topActions"><a href="avatar-studio.html">Rediger avatar</a><button id="photo" type="button">Foto</button><button id="settings" type="button" aria-expanded="false">Innstillinger</button></div>
+    <div class="topActions"><a href="city.html">District 01</a><a href="avatar-studio.html">Rediger avatar</a><button id="photo" type="button">Foto</button><button id="settings" type="button" aria-expanded="false">Innstillinger</button></div>
   </header>
   <aside class="socialPanel" aria-label="Loungeaktivitet">
     <div class="panelTabs"><button class="active" type="button">Lounge</button><button type="button" disabled>Venner</button></div>
@@ -23,10 +23,10 @@
     <div class="event"><span class="avatarDot warm">01</span><p><strong>Night Lounge</strong><small>Utforsk rommet og finn lyspunktene.</small></p></div>
     <div class="chatStub">Flerspillerchat aktiveres med spillserveren.</div>
   </aside>
-  <div class="location"><span class="eyebrow">ALTERA DISTRICT 01</span><strong id="locationName">Night Lounge</strong><small id="objective">Gå bort til det rosa lyspunktet</small></div>
+  <div class="location"><span class="eyebrow">ALTERA DISTRICT 01</span><strong id="locationName">Night Lounge</strong><small id="objective">Oppdag loungen · 0/3</small><div class="objectiveTrack" aria-hidden="true"><i id="objectiveProgress"></i></div></div>
   <div class="interaction" id="interaction" hidden><kbd>E</kbd><span id="interactionText">Samhandle</span></div>
   <nav class="actionBar" aria-label="Spillhandlinger">
-    <button id="wave" type="button"><span>Hei</span><small>Emote</small></button><button id="cameraSide" type="button"><span>Kamera</span><small>Bytt side</small></button><button id="walkToggle" type="button"><span>Gå</span><small>Fast fart</small></button><button id="exit" type="button"><span>Studio</span><small>Endre stil</small></button>
+    <button id="wave" type="button"><span>Hei</span><small>Emote</small></button><button id="cameraSide" type="button"><span>Kamera</span><small>Bytt side</small></button><button id="walkToggle" type="button"><span>Gå</span><small>Fast fart</small></button><button id="cityLink" type="button"><span>Byen</span><small>Gå ut</small></button><button id="exit" type="button"><span>Studio</span><small>Endre stil</small></button>
   </nav>
   <section class="settingsPanel" id="settingsPanel" hidden aria-label="Spillinnstillinger">
     <div><h2>Innstillinger</h2><button id="closeSettings" type="button" aria-label="Lukk">×</button></div>
@@ -37,6 +37,6 @@
   <div class="joystick" id="joystick" aria-label="Beveg avataren"><span></span></div>
   <button class="mobileAction" id="mobileAction" type="button" hidden>Samhandle</button>
   <div id="toast" hidden role="status"></div>
-  <script type="module" src="world.js?v=1"></script>
+  <script type="module" src="world.js?v=3"></script>
 </body>
 </html>

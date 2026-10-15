@@ -1,39 +1,16 @@
 import * as T from 'three';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-import {setupRiggedAvatar} from './rigged-avatar.js?v=7';
+import {setupRiggedAvatar} from './rigged-avatar.js?v=8';
+import {AVATAR_OPTIONS,AVATAR_STATE_KEY,DEFAULT_AVATAR_STATE,loadAvatarState,normalizeAvatarState,saveAvatarState} from './avatar-state.js?v=1';
 
 const $=id=>document.getElementById(id);
-const storageKey='altera-avatar-reference-v3';
+const storageKey=AVATAR_STATE_KEY;
 const mobile=matchMedia('(max-width:760px)').matches;
 const reducedMotion=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const lowPower=mobile || (navigator.deviceMemory && navigator.deviceMemory<=4);
-const defaults={gender:'Kvinne',body:1,muscle:0,faceSoftness:.55,eyeSize:.5,noseWidth:.5,lipFullness:.55,hairStyle:'Oppsatt',skin:'#d79b76',eye:'#416b86',hair:'#a96f4f',top:'Crop top',topColor:'#141318',bottom:'Cargo',bottomColor:'#28262d',shoes:'Sneakers',glasses:'Ingen',tattoo:'Ingen',modelMode:'builder'};
-let state={...defaults},section='Ansikt',history=[],redoHistory=[],toastTimer,activeAnimation='idle';
-try{const saved=localStorage.getItem(storageKey)||localStorage.getItem('altera-avatar-reference-v2');state={...defaults,...JSON.parse(saved||'{}')}}catch{}
-
-const options={
-  gender:['Kvinne','Mann'],hairStyle:['Oppsatt','Kort'],top:['Crop top','T-skjorte','Langermet'],bottom:['Cargo','Jeans','Shorts'],shoes:['Sneakers','Skinnsko']
-};
-for(const field of Object.keys(options))if(!options[field].includes(state[field]))state[field]=defaults[field];
-// Normalize persisted or imported customization before it reaches the 3D rig.
-const numericLimits={body:[.8,1.25],muscle:[0,1],faceSoftness:[0,1],eyeSize:[0,1],noseWidth:[0,1],lipFullness:[0,1]};
-const colorFields=['skin','eye','hair','topColor','bottomColor'];
-function sanitizeAvatar(value){
-  const next={...defaults};
-  if(!value||typeof value!=='object'||Array.isArray(value))return next;
-  for(const key of Object.keys(defaults)){
-    const input=value[key];
-    if(Object.hasOwn(numericLimits,key)){
-      const number=typeof input==='number'?input:Number(input);
-      if(Number.isFinite(number))next[key]=Math.min(numericLimits[key][1],Math.max(numericLimits[key][0],number));
-    }else if(colorFields.includes(key)){
-      if(typeof input==='string'&&/^#[0-9a-fA-F]{6}$/.test(input))next[key]=input.toLowerCase();
-    }else if(typeof input==='string'&&input.length<=80)next[key]=input;
-  }
-  return next;
-}
-state=sanitizeAvatar(state);
+const defaults=DEFAULT_AVATAR_STATE,options=AVATAR_OPTIONS;
+let state=loadAvatarState(),section='Ansikt',history=[],redoHistory=[],toastTimer;
 const palettes={
   skin:['#f1c5a7','#d79b76','#b97959','#92593f','#653926','#3c211b'],eye:['#416b86','#6d4b29','#657348','#85715e'],hair:['#21191b','#5b382c','#a96f4f','#d3a47a','#a84f58'],topColor:['#141318','#ddd4cb','#d989b8','#485e72'],bottomColor:['#28262d','#263347','#81766e','#4b4b50']
 };
@@ -53,11 +30,11 @@ const icons={
 };
 
 function note(text){$('toast').textContent=text;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,2200)}
-function save(){try{localStorage.setItem(storageKey,JSON.stringify(state));$('saveNote').textContent='Lagret på denne enheten'}catch{note('Lokal lagring er ikke tilgjengelig. Bruk eksport.')}}
-function change(patch,{silent=false}={}){if(Object.keys(patch).length&&!silent){history.push({...state});if(history.length>60)history.shift();redoHistory=[]}state=sanitizeAvatar({...state,...patch});rigged.applyState(state);ui();save()}
+function save(){try{state=saveAvatarState(state);$('saveNote').textContent='Lagret på denne enheten'}catch{note('Lokal lagring er ikke tilgjengelig. Bruk eksport.')}}
+function change(patch,{silent=false}={}){if(Object.keys(patch).length&&!silent){history.push({...state});if(history.length>60)history.shift();redoHistory=[]}Object.assign(state,patch);rigged.applyState(state);ui();save()}
 function button(text,active,action){const b=document.createElement('button');b.type='button';b.textContent=text;b.setAttribute('aria-pressed',String(active));b.onclick=action;return b}
 function field(title){const e=document.createElement('section');e.className='field';const h=document.createElement('h2');h.textContent=title;e.append(h);$('editor').append(e);return e}
-function choices(name,title){const e=field(title),row=document.createElement('div');row.className='choices';for(const value of options[name])row.append(button(value,state[name]===value,()=>change({[name]:value})));e.append(row)}
+function choices(name,title){const e=field(title),row=document.createElement('div'),available=rigged?.availableOptions?.(name);row.className='choices';for(const value of options[name]){const b=button(value,state[name]===value,()=>change({[name]:value}));if(Array.isArray(available)&&!available.includes(value)){b.disabled=true;b.title='Ikke tilgjengelig i denne 3D-modellen'}row.append(b)}e.append(row)}
 function colors(name,title){const e=field(title),row=document.createElement('div');row.className='swatches';for(const color of palettes[name]){const b=button('',state[name]===color,()=>change({[name]:color}));b.style.background=color;b.setAttribute('aria-label',title+' '+color);row.append(b)}e.append(row)}
 function range(name,title,min=0,max=1,left='Mindre',right='Mer'){const e=field(title),wrap=document.createElement('div'),input=document.createElement('input'),label=document.createElement('div');wrap.className='rangeWrap';input.type='range';input.min=min;input.max=max;input.step=.01;input.value=state[name];input.setAttribute('aria-label',title);let before;input.onpointerdown=()=>before={...state};input.onkeydown=()=>before??={...state};input.oninput=()=>{state[name]=Number(input.value);rigged.applyState(state)};input.onchange=()=>{if(before){history.push(before);if(history.length>60)history.shift();redoHistory=[]}before=null;save();ui()};label.className='rangeLabel';label.innerHTML='<span>'+left+'</span><span>'+right+'</span>';wrap.append(input,label);e.append(wrap)}
 function setSection(name){section=name;if(name==='Ansikt'||name==='Hår')setCameraMode('face');else setCameraMode('full');ui()}
@@ -72,6 +49,7 @@ function ui(){
   if(section==='Klær'){choices('top','Overdel');choices('bottom','Underdel');choices('shoes','Sko')}
   if(section==='Farger'){colors('topColor','Overdel');colors('bottomColor','Underdel');colors('skin','Hudtone');colors('hair','Hårfarge')}
   $('undo').disabled=!history.length;$('redo').disabled=!redoHistory.length;
+  document.querySelectorAll('.modeNav button').forEach((button,index)=>{const target=button.dataset.section;button.classList.toggle('active',target?target===section||(target==='Detaljer'&&section==='Farger'):(['Ansikt','Hår','Kropp'].includes(section)&&index===0))});
   const styles=$('presets');styles.replaceChildren();
   for(const preset of presets){const active=Object.entries(preset.patch).every(([k,v])=>state[k]===v),b=button('',active,()=>change(preset.patch));b.className='styleCard';b.style.setProperty('--color',preset.color);b.style.setProperty('--skin',preset.patch.skin||state.skin);b.style.setProperty('--top',preset.patch.topColor||state.topColor);b.innerHTML='<strong>'+preset.name+'</strong><small>'+preset.detail+'</small>';styles.append(b)}
 }
@@ -116,4 +94,4 @@ function buildStudio(){
 ui();rigged.loadBuilder();
 let loaded=false,lastWidth=0,lastHeight=0,lastTime=0;
 function frame(time){const rect=canvas.getBoundingClientRect();if(rect.width&&rect.height&&(rect.width!==lastWidth||rect.height!==lastHeight)){renderer.setSize(rect.width,rect.height,false);camera.aspect=rect.width/rect.height;camera.updateProjectionMatrix();lastWidth=rect.width;lastHeight=rect.height}controls.update();rigged.tick(0);renderer.render(scene,camera);if(rigged.hasModel()&&!loaded){loaded=true;$('loading').hidden=true;ui()}else if(!loaded&&$('glbStatus').textContent.includes('kunne ikke lastes')){$('loadingMessage').textContent='Avataren kunne ikke lastes. Last siden på nytt.';$('loading').querySelector('span').hidden=true}lastTime=time;requestAnimationFrame(frame)}requestAnimationFrame(frame);
-window.addEventListener('storage',e=>{if(e.key===storageKey&&e.newValue){try{state={...defaults,...JSON.parse(e.newValue)};rigged.applyState(state);ui()}catch{}}});
+window.addEventListener('storage',e=>{if(e.key===storageKey&&e.newValue){try{state=normalizeAvatarState(JSON.parse(e.newValue));rigged.applyState(state);ui()}catch{}}});
