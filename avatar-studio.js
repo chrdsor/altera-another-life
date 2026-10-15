@@ -16,6 +16,24 @@ const options={
   gender:['Kvinne','Mann'],hairStyle:['Oppsatt','Kort'],top:['Crop top','T-skjorte','Langermet'],bottom:['Cargo','Jeans','Shorts'],shoes:['Sneakers','Skinnsko']
 };
 for(const field of Object.keys(options))if(!options[field].includes(state[field]))state[field]=defaults[field];
+// Normalize persisted or imported customization before it reaches the 3D rig.
+const numericLimits={body:[.8,1.25],muscle:[0,1],faceSoftness:[0,1],eyeSize:[0,1],noseWidth:[0,1],lipFullness:[0,1]};
+const colorFields=['skin','eye','hair','topColor','bottomColor'];
+function sanitizeAvatar(value){
+  const next={...defaults};
+  if(!value||typeof value!=='object'||Array.isArray(value))return next;
+  for(const key of Object.keys(defaults)){
+    const input=value[key];
+    if(Object.hasOwn(numericLimits,key)){
+      const number=typeof input==='number'?input:Number(input);
+      if(Number.isFinite(number))next[key]=Math.min(numericLimits[key][1],Math.max(numericLimits[key][0],number));
+    }else if(colorFields.includes(key)){
+      if(typeof input==='string'&&/^#[0-9a-fA-F]{6}$/.test(input))next[key]=input.toLowerCase();
+    }else if(typeof input==='string'&&input.length<=80)next[key]=input;
+  }
+  return next;
+}
+state=sanitizeAvatar(state);
 const palettes={
   skin:['#f1c5a7','#d79b76','#b97959','#92593f','#653926','#3c211b'],eye:['#416b86','#6d4b29','#657348','#85715e'],hair:['#21191b','#5b382c','#a96f4f','#d3a47a','#a84f58'],topColor:['#141318','#ddd4cb','#d989b8','#485e72'],bottomColor:['#28262d','#263347','#81766e','#4b4b50']
 };
@@ -36,7 +54,7 @@ const icons={
 
 function note(text){$('toast').textContent=text;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,2200)}
 function save(){try{localStorage.setItem(storageKey,JSON.stringify(state));$('saveNote').textContent='Lagret på denne enheten'}catch{note('Lokal lagring er ikke tilgjengelig. Bruk eksport.')}}
-function change(patch,{silent=false}={}){if(Object.keys(patch).length&&!silent){history.push({...state});if(history.length>60)history.shift();redoHistory=[]}Object.assign(state,patch);rigged.applyState(state);ui();save()}
+function change(patch,{silent=false}={}){if(Object.keys(patch).length&&!silent){history.push({...state});if(history.length>60)history.shift();redoHistory=[]}state=sanitizeAvatar({...state,...patch});rigged.applyState(state);ui();save()}
 function button(text,active,action){const b=document.createElement('button');b.type='button';b.textContent=text;b.setAttribute('aria-pressed',String(active));b.onclick=action;return b}
 function field(title){const e=document.createElement('section');e.className='field';const h=document.createElement('h2');h.textContent=title;e.append(h);$('editor').append(e);return e}
 function choices(name,title){const e=field(title),row=document.createElement('div');row.className='choices';for(const value of options[name])row.append(button(value,state[name]===value,()=>change({[name]:value})));e.append(row)}
