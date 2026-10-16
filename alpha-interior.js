@@ -39,7 +39,7 @@ function save(key,value){try{localStorage.setItem(key,JSON.stringify(value))}cat
 function interact(){
  if(!near)return;
  if(near.id==='exit'){location.href='alpha.html';return}
- if(near.id==='maja'){const next=advanceQuest(quest,'talk_cafe');quest=next.state;if(next.changed)save(questKey,quest);$('dialogue').textContent=questDialogue(quest)}
+ if(near.id==='maja'){const previous=quest.step;const next=advanceQuest(quest,'talk_cafe');quest=next.state;if(next.changed)save(questKey,quest);$('dialogue').textContent=previous==='meet'?'Maja: Velkommen til District 01! Kan du besøke Nordkaien og komme tilbake?':previous==='return'?'Maja: Tusen takk! Du har fått et havnepostkort. Heng det opp hjemme!':questDialogue(quest)}
  if(near.id==='postcard'){if(!unlocked()){$('dialogue').textContent='Fullfør Majas velkomstoppdrag først.';return}placed=placePostcard(true,placed);save(homeKey,{postcard:placed});scene.children.filter(o=>o.userData?.postcard).forEach(o=>o.material.color.setHex(0xbfd1d6));$('dialogue').textContent='Havnepostkortet er hengt opp og lagret i denne nettleseren.'}
 }
 function tick(now){const dt=Math.min((now-last)/1000,.05);last=now;const x=Number(keys.has('KeyD')||keys.has('ArrowRight'))-Number(keys.has('KeyA')||keys.has('ArrowLeft')),z=Number(keys.has('KeyS')||keys.has('ArrowDown'))-Number(keys.has('KeyW')||keys.has('ArrowUp'));const len=Math.hypot(x,z);
