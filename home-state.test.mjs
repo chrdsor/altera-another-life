@@ -1,9 +1,10 @@
-import {FURNITURE_CATALOG,HOME_LIMIT,HOME_STATE_KEY,LEGACY_HOME_STATE_KEY,addFurniture,deriveHomeProgress,loadHomeState,normalizeHomeState,removeFurniture,saveHomeState,updateFurniture} from './home-state.js';
+import {FURNITURE_CATALOG,HOME_LIMIT,HOME_STATE_KEY,LEGACY_HOME_STATE_KEY,addFurniture,deriveHomeProgress,furniturePlacementError,loadHomeState,normalizeHomeState,removeFurniture,saveHomeState,updateFurniture} from './home-state.js';
 const assert=(ok,message)=>{if(!ok)throw new Error(message)};
 const hostile=normalizeHomeState({items:[{id:'bad',type:'sofa',x:999,z:-999},{id:'item_001',type:'unknown'},{id:'item_002',type:'chair',x:99,z:-99,rotation:.9,color:'red'}]});
 assert(hostile.items.length===1&&hostile.items[0].x===4.35&&hostile.items[0].z===-3.85,'sanitize items');
 let state=normalizeHomeState(),created=addFurniture(state,'sofa',{x:1,z:2});state=created.state;assert(created.item.id==='item_001'&&state.items.length===1,'add item');
 state=updateFurniture(state,'item_001',{x:3,rotation:Math.PI/2});assert(state.items[0].x===3&&state.items[0].rotation===Math.PI/2,'update item');
+assert(furniturePlacementError(state,{id:'candidate',type:'chair',x:3,z:2,rotation:0})==='overlap','placement overlap');assert(furniturePlacementError(state,{id:'candidate',type:'chair',x:-4.2,z:0,rotation:0})==='outside_home','placement bounds');
 state=removeFurniture(state,'item_001');assert(state.items.length===0,'remove item');
 let progress=deriveHomeProgress(state);assert(progress.completed.length===0&&progress.next?.id==='anchor_room'&&!progress.complete,'first task');
 for(const type of ['sofa','table','lamp'])state=addFurniture(state,type).state;progress=deriveHomeProgress(state);assert(progress.completed.length===3&&progress.complete&&!progress.next,'furnishing progression');

@@ -14,6 +14,8 @@ Serve the client on the allowed origin and open:
 http://localhost:8080/world.html?authority=http://127.0.0.1:8787
 ```
 
-Implemented contracts: development sessions, actor binding, room join/leave, normalized presence, rate-limited chat, starter home and inventory, access control, validated furniture placement, escrow-style listings, idempotent commands and atomic integer-money transfers.
+Implemented contracts: development sessions, actor binding, room join/leave, normalized presence, rate-limited chat, starter home and inventory, access control, validated furniture placement, escrow-style listings, listing cancellation, idempotent commands and atomic double-entry integer-money transfers.
+
+SQLite migration 2 adds normalized accounts, inventory, listings, transactions and ledger postings alongside the restart-safe world snapshot. Every completed marketplace payment has equal debit and credit postings, while rejected payments leave balances, inventory, listings and ledger unchanged.
 
 Required before production: external identity provider, normalized transactional schema, WebSocket gateway, encrypted deployment, audit retention, moderation tooling, managed migrations, backups, rate limiting at the edge and security review.

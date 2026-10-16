@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101417">
+  <meta name="description" content="Kjøp og selg interiør i ALTERA City Exchange.">
+  <title>ALTERA · City Exchange</title>
+  <link rel="stylesheet" href="market.css?v=1">
+</head>
+<body>
+  <header class="marketHeader">
+    <a class="brand" href="city.html"><strong>ALTERA</strong><small>CITY EXCHANGE</small></a>
+    <div class="marketIdentity"><span id="connectionDot"></span><p><b id="playerName">Frakoblet</b><small id="connectionState">Utviklingsserver kreves</small></p></div>
+    <div class="balance"><span>SALDO</span><strong id="balanceValue">—</strong></div>
+    <a class="closeMarket" id="cityLink" href="city.html" aria-label="Tilbake til District 01">×</a>
+  </header>
+
+  <main>
+    <section class="exchange" aria-labelledby="marketTitle">
+      <header class="sectionTitle"><div><span>DISTRICT 01 / LIVE MARKET</span><h1 id="marketTitle">Interiørbørsen</h1></div><div class="marketStats"><p><strong id="listingCount">0</strong><small>aktive annonser</small></p><p><strong id="inventoryCount">0</strong><small>varer på lager</small></p></div></header>
+      <nav class="filters" aria-label="Markedsfilter"><button class="active" type="button" data-filter="all">Alle</button><button type="button" data-filter="seating">Sitte</button><button type="button" data-filter="surface">Bord</button><button type="button" data-filter="light">Lys</button></nav>
+      <div class="listingGrid" id="listingGrid" aria-live="polite"></div>
+      <div class="emptyMarket" id="emptyMarket"><strong>Markedet er stille akkurat nå</strong><span>Legg ut en vare fra inventaret ditt.</span></div>
+    </section>
+
+    <aside class="trader" aria-label="Din markedsplass">
+      <section class="sellPanel">
+        <header><span>SELGERPANEL</span><strong>Legg ut vare</strong></header>
+        <form id="listingForm">
+          <label>Vare<select id="itemType" required></select></label>
+          <label>Pris i ALC<input id="price" type="number" inputmode="numeric" min="1" max="1000" step="1" value="8" required></label>
+          <button id="listItem" type="submit">Publiser annonse</button>
+        </form>
+        <p id="inventoryHint">Koble til serveren for å se inventaret.</p>
+      </section>
+      <section class="activityPanel">
+        <header><span>SISTE AKTIVITET</span><strong>Kontobevegelser</strong></header>
+        <ol id="transactionList"></ol>
+      </section>
+    </aside>
+  </main>
+
+  <div class="connectionNotice" id="connectionNotice"><strong>City Exchange er i visningsmodus</strong><span>Åpne siden med en autoritetsadresse for å handle med servereid saldo og inventar.</span><a id="noticeCityLink" href="city.html">Tilbake til District 01</a></div>
+  <div id="toast" hidden role="status"></div>
+  <script type="module" src="market.js?v=1"></script>
+</body>
+</html>

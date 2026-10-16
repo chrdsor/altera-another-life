@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#101416">
+  <meta name="description" content="Bygg modulært på din første tomt i ALTERA City.">
+  <title>ALTERA · Byggeverktøy</title>
+  <link rel="stylesheet" href="build.css?v=1">
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script>
+</head>
+<body>
+  <canvas id="builder" aria-label="ALTERA modulært byggeverktøy i 3D"></canvas>
+  <div class="loading" id="loading" role="status"><span></span><strong>Åpner byggeverktøyet</strong><small id="loadingDetail">Klargjør tomten</small></div>
+  <header class="hudTop"><a class="brand" href="index.html"><strong>ALTERA</strong><small>BYGGEVERKSTED</small></a><div class="plotState"><i></i><span><b id="buildStateLabel">LOKAL PROTOTYPE</b><small>Tomt 01 · District 01</small></span></div><div class="topActions"><a href="city.html">District 01</a><a href="home.html">Hjem 01</a><button id="photo" type="button">Foto</button></div></header>
+  <section class="mission"><span>FØRSTE KONSTRUKSJON</span><strong id="buildObjective">Legg et fundament</strong><div><i id="buildProgress"></i></div><small id="buildProgressLabel">0 / 4</small></section>
+  <aside class="catalogPanel" id="catalogPanel"><header><span>MODULER</span><b id="moduleCount">0 / 120</b></header><div class="catalog"><button data-module="foundation" type="button"><i class="foundation"></i><span>Fundament</span><small>250</small></button><button data-module="wall" type="button"><i class="wall"></i><span>Vegg</span><small>180</small></button><button data-module="window" type="button"><i class="window"></i><span>Vindu</span><small>320</small></button><button data-module="door" type="button"><i class="door"></i><span>Dør</span><small>360</small></button><button data-module="roof" type="button"><i class="roof"></i><span>Tak</span><small>220</small></button></div></aside>
+  <div class="budget"><span>BUDSJETT</span><strong id="budgetValue">8 000</strong><small id="spentValue">0 brukt</small></div>
+  <div class="selectionBar" id="selectionBar" hidden><strong id="selectedModule">Modul</strong><button id="rotateModule" type="button">Roter</button><button id="deleteModule" type="button">Fjern</button></div>
+  <nav class="actionBar"><button id="rotatePreview" type="button"><span>Roter</span><small>90°</small></button><button id="resetCamera" type="button"><span>Kamera</span><small>Oversikt</small></button><button id="clearSelection" type="button"><span>Avbryt</span><small>Valg</small></button><button id="exitBuild" type="button"><span>Byen</span><small>Gå ut</small></button></nav>
+  <div class="lockedNotice" id="lockedNotice" hidden><strong>Tomten er ikke åpnet ennå</strong><span>Fullfør Ankomst-kapittelet i District 01.</span><a href="city.html">Tilbake til byen</a></div>
+  <button class="placeButton" id="placeButton" type="button" hidden>Plasser</button><div id="toast" role="status" hidden></div>
+  <script type="module" src="build.js?v=2"></script>
+</body>
+</html>

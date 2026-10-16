@@ -1,7 +1,7 @@
 // ALTERA domain contracts v1. Pure data and validation; no browser or network dependencies.
 // This module is NOT an authoritative game server.
 export const SCHEMA_VERSION=1;
-export const COMMAND_TYPES=Object.freeze(['join_room','leave_room','update_presence','send_chat','place_furniture','create_listing','purchase_listing','request_build','set_access']);
+export const COMMAND_TYPES=Object.freeze(['join_room','leave_room','update_presence','send_chat','place_furniture','create_listing','cancel_listing','purchase_listing','request_build','set_access']);
 export const ENTITY_TYPES=Object.freeze(['district','parcel','building','interior','item','business','organization']);
 export const PERMISSIONS=Object.freeze(['visit','place_furniture','build','manage_access','sell','operate_business']);
 export const WORLD_RULES=Object.freeze({coordinateUnit:'meter',currencyMinorUnit:'cent',serverAuthority:true,idPattern:'^[a-z0-9][a-z0-9_-]{2,63}$'});

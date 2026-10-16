@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#071019">
   <meta name="description" content="Utforsk ALTERA District 01 med avataren din.">
   <title>ALTERA · District 01</title>
-  <link rel="stylesheet" href="city.css?v=3">
+  <link rel="stylesheet" href="city.css?v=4">
   <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/","rapier":"https://cdn.jsdelivr.net/npm/@dimforge/rapier3d-compat@0.21.0/rapier.es.js"}}</script>
 </head>
 <body>
@@ -15,7 +15,7 @@
   <header class="hudTop">
     <a class="worldBrand" href="index.html" aria-label="ALTERA hjem"><strong>ALTERA</strong><small>DISTRICT 01</small></a>
     <div class="cityStatus"><i></i><span><b>BYEN ER LIVE</b><small id="cityTime">Blåtime · 18:42</small></span></div>
-    <div class="topActions"><a href="home.html">Første hjem</a><a href="world.html">Night Lounge</a><a href="avatar-studio.html">Studio</a><button id="photo" type="button">Foto</button><button id="settings" type="button" aria-expanded="false">Innstillinger</button></div>
+    <div class="topActions"><a href="market.html">Exchange</a><a href="build.html">Bygg</a><a href="home.html">Første hjem</a><a href="world.html">Night Lounge</a><a href="avatar-studio.html">Studio</a><button id="photo" type="button">Foto</button><button id="settings" type="button" aria-expanded="false">Innstillinger</button></div>
   </header>
   <div class="location"><span class="eyebrow">ALTERA WATERFRONT</span><strong id="locationName">Sjøpromenaden</strong><small id="objective">Oppdag District 01 · 0/4</small><div class="objectiveTrack" aria-hidden="true"><i id="objectiveProgress"></i></div><div class="cityStats"><span>BYRYKTE <b id="reputation">0</b></span><span id="chapter">ANKOMST</span></div></div>
   <aside class="pulsePanel" aria-label="Bypuls">
@@ -26,7 +26,7 @@
   <aside class="districtMap" aria-label="Kart over District 01"><span>N</span><div class="mapRoute"><i id="mapPlayer"></i><b data-spot="quay" title="Nordkaien"></b><b data-spot="cafe" title="Kafé Varm"></b><b data-spot="gallery" title="Galleri 01"></b><b data-spot="transit" title="Linje 01"></b></div><small>DISTRICT 01</small></aside>
   <div class="interaction" id="interaction" hidden><kbd>E</kbd><span id="interactionText">Samhandle</span></div>
   <nav class="actionBar" aria-label="Spillhandlinger">
-    <button id="wave" type="button"><span>Hei</span><small>Emote</small></button><button id="cameraSide" type="button"><span>Kamera</span><small>Bytt side</small></button><button id="walkToggle" type="button"><span>Gå</span><small>Fast fart</small></button><button id="homeLink" type="button"><span>Hjem</span><small>Gå inn</small></button><button id="lounge" type="button"><span>Lounge</span><small>Gå inn</small></button>
+    <button id="wave" type="button"><span>Hei</span><small>Emote</small></button><button id="cameraSide" type="button"><span>Kamera</span><small>Bytt side</small></button><button id="walkToggle" type="button"><span>Gå</span><small>Fast fart</small></button><button id="marketLink" type="button"><span>Exchange</span><small>Handle</small></button><button id="buildLink" type="button"><span>Bygg</span><small>Tomt 01</small></button><button id="homeLink" type="button"><span>Hjem</span><small>Gå inn</small></button><button id="lounge" type="button"><span>Lounge</span><small>Gå inn</small></button>
   </nav>
   <section class="settingsPanel" id="settingsPanel" hidden aria-label="Spillinnstillinger">
     <div><h2>Innstillinger</h2><button id="closeSettings" type="button" aria-label="Lukk">×</button></div>
@@ -38,6 +38,6 @@
   <div class="joystick" id="joystick" aria-label="Beveg avataren"><span></span></div>
   <button class="mobileAction" id="mobileAction" type="button" hidden>Samhandle</button>
   <div id="toast" hidden role="status"></div>
-  <script type="module" src="city.js?v=3"></script>
+  <script type="module" src="city.js?v=5"></script>
 </body>
 </html>

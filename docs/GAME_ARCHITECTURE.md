@@ -2,13 +2,15 @@
 
 ## Current vertical slice
 
-`avatar-studio.html`, `world.html`, `city.html` and `home.html` use the same local avatar state (`altera-avatar-reference-v3`) and the same rigged GLB. A player can customize the avatar, enter Night Lounge, continue into District 01, unlock a first home, move with keyboard or touch controls, and return to the studio without losing the selected body, hair, clothing or colors.
+`avatar-studio.html`, `world.html`, `city.html` and `home.html` use the same local avatar state (`altera-avatar-reference-v3`) and the same rigged GLB. A player can customize the avatar, enter Night Lounge, continue into District 01, unlock a first home and construction parcel, move with keyboard or touch controls, furnish a home and assemble a modular first structure.
 
 The shared state is normalized in `avatar-state.js` before rendering. Runtime materials, wardrobe choices, morphs and animation actions are shared through `avatar-appearance.js`, so avatar identity remains consistent between spaces. Night Lounge includes three discoverable interaction points. District 01 adds four persistent discoveries across a playable waterfront, followed by a gated residential portal.
 
 District 01 prototype progression is normalized in `city-state.js` and linked to the versioned `world-domain.js` district identity. Completed actions derive reputation and visible world flags instead of trusting arbitrary stored totals. The first-home layout is separately normalized in `home-state.js`, tied to `city_01` through `settlements.js`, capped at 24 objects and protected against unknown catalog entries or invalid transforms. These local states are prototype conveniences only; future property, inventory, currency and social presence must remain server-authoritative.
 
 Night Lounge, District 01 and First Home are actual Three.js scenes. The city vertical slice includes animated water, boats, tram traffic, articulated ambient pedestrians, optional rain, four distinct place scenes, collision, mobile controls and persistent progress. Facade windows use instancing to keep draw calls bounded as the street becomes denser. First Home adds an explorable apartment, walk/edit modes, placement preview, bounds and overlap checks, rigid-body furniture collision, moving, rotation, removal and persistent furnishing. Its three-step move-in objective is derived from the normalized furniture state, so arbitrary completion flags are not trusted. It does not use the supplied concept images as a background or substitute the avatar with a static render.
+
+`build.html` is a full-screen Three.js parcel editor linked from District 01. Its normalized construction state derives cost and progress from placed modules, enforces parcel bounds and same-layer overlap, requires foundations below upper modules and prevents removal of foundations that still support a structure. The current editor is a local prototype; authoritative placement must later pass through the development authority and simulation kernel.
 
 ## Prioritized development gaps
 
@@ -28,7 +30,7 @@ Night Lounge, District 01 and First Home are actual Three.js scenes. The city ve
 
 ## Runtime boundaries
 
-The browser owns presentation, input prediction, camera and interpolation. The development authority in `server/` now owns validated room membership, rate-limited chat, presence, starter homes, furniture commands, access control, inventory, listings and atomic integer-money transfers. `social-client.js` can connect Night Lounge to that authority through `?authority=<server-url>` while the public static demo remains an honest solo preview.
+The browser owns presentation, input prediction, camera and interpolation. The development authority in `server/` now owns validated room membership, rate-limited chat, presence, starter homes, furniture commands, access control, inventory and escrow-style listings. Marketplace payments use balanced integer-money debit and credit postings from `server/economy-ledger.mjs`; SQLite migration 2 mirrors accounts, inventory, listings, transactions and entries into normalized tables. `social-client.js` can carry one development session across Night Lounge, City Exchange, First Home and Construction through `?authority=<server-url>`, while static pages remain honest local or read-only previews.
 
 The dependency-free Node development service persists validated world snapshots through the built-in SQLite module and has a restart/idempotency test. It proves contracts, end-to-end HTTP behavior and development persistence, but is not production infrastructure: it still needs a normalized transactional schema, real authentication, WebSocket transport, moderation storage, deployment, backups and operational security before public multiplayer.
 
@@ -57,6 +59,7 @@ node --check home.js
 node world-domain.test.mjs
 node city-state.test.mjs
 node home-state.test.mjs
+node construction-state.test.mjs
 node server/authoritative-world.test.mjs
 node server/http-server.test.mjs
 node server/sqlite-store.test.mjs

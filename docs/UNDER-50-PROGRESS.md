@@ -9,27 +9,29 @@ The target is demonstrable prototype coverage, not a claim of production complet
 - `server/http-server.mjs` binds every command to the authenticated development session and rejects actor spoofing.
 - `server/sqlite-store.mjs` provides versioned SQLite persistence; restart tests prove that players, rooms, presence and idempotency records survive a process restart.
 - `social-client.js` connects two tested clients to the same room. Night Lounge activates the online room list, synchronized chat and presence when an authority URL is configured.
+- `home.html?authority=...` resumes the same session and uses the server-owned home and inventory for validated placement, movement, rotation and removal while retaining an explicit local fallback.
+- `market.html?authority=...` exposes server-owned balance, inventory, listings, purchases, cancellation and account activity. Payments are balanced debit/credit postings and migration 2 persists normalized economy rows.
 
 ## Honest coverage after this milestone
 
 | System | Prototype coverage | What blocks 50% |
 |---|---:|---|
 | Identity and multiplayer | 35% | External authentication, WebSocket movement and hosted service |
-| Persistence | 40% | Normalized schema, concurrency, backups and migration operations |
-| Economy | 35% | One canonical ledger implementation, durable double-entry postings and fraud controls |
-| Property and home | 45% | Server-connected public client, visits and inventory-backed furnishing |
+| Persistence | 45% | Canonical normalized world loading, concurrency, backups and migration operations |
+| Economy | 50% | Hosted authority, broader item economy, fraud controls and operational tooling |
+| Property and home | 50% | Visits, access-management UI, production furniture assets and hosted authority |
 | Social | 40% | Remote avatar rendering, friends/invites, blocking and moderation workflow |
-| Construction | 25% | Client editor, modular kit, geometry validation and persisted shared placement |
+| Construction | 50% | Multi-cell structures, shared rendering and production asset kit |
 | NPC and society | 10% | Jobs, businesses, schedules, organizations and governance loop |
 | Character art | 25% | Finished licensed Hero 001 GLB, facial rig, hair cards, garments and LOD |
 | World art | 25% | Hero street assets, authored materials/lightmaps and device benchmarks |
 
 ## Next gates
 
-1. Consolidate economy/property around one durable domain and normalized ledger tables.
+1. Make normalized SQLite rows the canonical load path for the full world and add backup/migration operations.
 2. Add hosted authentication and WebSocket transport, then render remote avatars in Night Lounge.
-3. Connect server-owned inventory and home state to the public furnishing client.
-4. Build the first modular parcel editor against authoritative bounds and permissions.
+3. Add home visits and an access-management UI on top of the existing server-owned home state.
+4. Extend the server-connected modular parcel editor with multi-cell structures, shared rendering and inventory-backed materials.
 5. Produce or license Hero 001 and one hero street kit; code alone cannot close the art gap.
 
 ## Security boundary

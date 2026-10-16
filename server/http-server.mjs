@@ -10,7 +10,7 @@ export function createAlteraServer({world=new AuthoritativeWorld(),store=null,al
     if(request.method==='OPTIONS'){response.writeHead(204);response.end();return}
     try{
       const url=new URL(request.url,'http://localhost');
-      if(request.method==='GET'&&url.pathname==='/health')return json(response,200,{ok:true,service:'altera-authority-dev',persistence:'memory'});
+      if(request.method==='GET'&&url.pathname==='/health')return json(response,200,{ok:true,service:'altera-authority-dev',persistence:store?'sqlite':'memory'});
       if(request.method==='POST'&&url.pathname==='/v1/session'){
         const body=await readJson(request),id=`player_${randomUUID().replaceAll('-','').slice(0,12)}`,token=randomUUID();
         const snapshot=world.registerPlayer({id,displayName:body.displayName});sessions.set(token,id);store?.save(world);return json(response,201,{token,snapshot});

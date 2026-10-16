@@ -34,7 +34,11 @@ export function saveHomeState(state,storage=globalThis.localStorage){const norma
 export function addFurniture(state,type,position={}){const current=normalizeHomeState(state);if(!FURNITURE_CATALOG[type]||current.items.length>=HOME_LIMIT)return{state:current,item:null};const used=new Set(current.items.map(item=>item.id));let index=1,id;do{id=`item_${String(index++).padStart(3,'0')}`}while(used.has(id));const item={id,type,x:position.x||0,z:position.z||0,rotation:0,color:FURNITURE_CATALOG[type].color};return{state:normalizeHomeState({...current,items:[...current.items,item]}),item}}
 export function updateFurniture(state,id,patch={}){const current=normalizeHomeState(state);return normalizeHomeState({...current,items:current.items.map(item=>item.id===id?{...item,...patch,id:item.id,type:item.type}:item)})}
 export function removeFurniture(state,id){const current=normalizeHomeState(state);return normalizeHomeState({...current,items:current.items.filter(item=>item.id!==id)})}
+export function furniturePlacementError(state,item,ignoreId=null){
+  if(!item||!FURNITURE_CATALOG[item.type]||![item.x,item.z,item.rotation].every(Number.isFinite))return'invalid_item';const [width,depth]=orientedFootprint(item);if(item.x-width/2<-4.45||item.x+width/2>3.55||item.z-depth/2<-3.9||item.z+depth/2>3.9)return'outside_home';for(const other of normalizeHomeState(state).items){if(other.id===ignoreId)continue;const [otherWidth,otherDepth]=orientedFootprint(other);if(Math.abs(item.x-other.x)<(width+otherWidth)/2+.12&&Math.abs(item.z-other.z)<(depth+otherDepth)/2+.12)return'overlap'}return null;
+}
 export function deriveHomeProgress(state){
   const current=normalizeHomeState(state),types=new Set(current.items.map(item=>item.type)),completed=HOME_TASKS.filter(task=>types.has(task.type)).map(task=>task.id),next=HOME_TASKS.find(task=>!completed.includes(task.id))||null;
   return{completed,next,complete:completed.length===HOME_TASKS.length,total:HOME_TASKS.length};
 }
+function orientedFootprint(item){const base=FURNITURE_CATALOG[item.type].footprint,quarter=Math.abs(Math.round(item.rotation/(Math.PI/2)))%2;return quarter?[base[1],base[0]]:base}

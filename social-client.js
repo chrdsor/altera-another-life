@@ -1,6 +1,7 @@
 export class AlteraSocialClient{
   constructor(baseUrl,{fetchImpl=globalThis.fetch}={}){this.baseUrl=String(baseUrl||'').replace(/\/$/,'');this.fetch=fetchImpl;this.token=null;this.actorId=null;this.sequence=0}
   async connect(displayName){const data=await this.request('/v1/session',{method:'POST',body:{displayName}});this.token=data.token;this.actorId=data.snapshot.player.id;return data.snapshot}
+  async restoreOrConnect(displayName,storage=globalThis.sessionStorage){const key='altera-authority-session-v1';try{const saved=JSON.parse(storage?.getItem(key)||'null');if(saved?.baseUrl===this.baseUrl&&saved.token&&saved.actorId){this.token=saved.token;this.actorId=saved.actorId;return await this.snapshot()}}catch{}const snapshot=await this.connect(displayName);try{storage?.setItem(key,JSON.stringify({baseUrl:this.baseUrl,token:this.token,actorId:this.actorId}))}catch{}return snapshot}
   async join(roomId){return this.command('join_room',{roomId})}
   async leave(roomId){return this.command('leave_room',{roomId})}
   async updatePresence(roomId,{x,z,yaw}){return this.command('update_presence',{roomId,x,z,yaw,now:Date.now()})}
