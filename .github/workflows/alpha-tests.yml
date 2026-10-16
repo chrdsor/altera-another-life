@@ -17,4 +17,4 @@ jobs:
       - name: Check quest logic
         run: node --test tests/alpha-quest.test.mjs tests/alpha-home-demo.test.mjs
       - name: Check alpha script syntax
-        run: node --check alpha.js
+        run: node --check alpha.js && node --check alpha-interior.js
