@@ -42,12 +42,12 @@
 (function(){
 const loading=document.getElementById('loading'),detail=document.getElementById('loadingDetail');
 let shown=false;
-function report(message){if(shown||!loading||loading.hidden)return;shown=true;detail.textContent=message;loading.querySelector('span')?.setAttribute('hidden','');const help=document.createElement('div');help.style.cssText='margin:16px auto;max-width:360px;padding:12px;background:#172535;color:white;border-radius:12px;font:14px system-ui;line-height:1.5';help.textContent='Oppstarten feilet. Prøv å oppdatere siden. Send gjerne denne feilmeldingen til utvikleren.';const button=document.createElement('button');button.type='button';button.textContent='Prøv igjen';button.style.cssText='display:block;margin:12px auto;padding:9px 16px;border-radius:8px';button.onclick=()=>location.reload();help.append(button);loading.append(help)}
+function report(message){if(shown||!loading||loading.hidden)return;shown=true;detail.textContent=message;loading.querySelector('span')?.setAttribute('hidden','');const help=document.createElement('div');help.style.cssText='margin:16px auto;max-width:360px;padding:12px;background:#172535;color:white;border-radius:12px;font:14px system-ui;line-height:1.5';help.textContent='Oppstarten feilet. Prøv å oppdatere siden. Send gjerne denne feilmeldingen til utvikleren.';const button=document.createElement('button');button.type='button';button.textContent='Prøv igjen';button.style.cssText='display:block;margin:12px auto;padding:9px 16px;border-radius:8px';button.onclick=()=>location.reload();help.append(button);const diag=document.createElement('a');diag.href='diagnostics.html';diag.textContent='Test hvorfor spillet ikke starter';diag.style.cssText='display:block;color:#b9ddff;margin-top:10px;text-decoration:underline';help.append(diag);loading.append(help)}
 window.addEventListener('error',e=>report('JavaScript-feil: '+(e.message||'Ukjent feil')));
 window.addEventListener('unhandledrejection',e=>report('Oppstartsfeil: '+(e.reason?.message||String(e.reason||'Ukjent feil'))));
 setTimeout(()=>report('Spillet svarte ikke innen 20 sekunder. Mulig nettverksfeil, WebGL-problem eller blokkert ekstern spillmotor.'),20000);
 })();
 </script>
-<script type="module" src="city.js?v=7"></script>
+<script type="module" src="city.js?v=8"></script>
 </body>
 </html>
