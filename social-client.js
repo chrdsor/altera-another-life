@@ -1,12 +1,17 @@
 export class AlteraSocialClient{
   constructor(baseUrl,{fetchImpl=globalThis.fetch}={}){this.baseUrl=String(baseUrl||'').replace(/\/$/,'');this.fetch=fetchImpl;this.token=null;this.actorId=null;this.sequence=0}
-  async connect(displayName){const data=await this.request('/v1/session',{method:'POST',body:{displayName}});this.token=data.token;this.actorId=data.snapshot.player.id;return data.snapshot}
-  async restoreOrConnect(displayName,storage=globalThis.sessionStorage){const key='altera-authority-session-v1';try{const saved=JSON.parse(storage?.getItem(key)||'null');if(saved?.baseUrl===this.baseUrl&&saved.token&&saved.actorId){this.token=saved.token;this.actorId=saved.actorId;return await this.snapshot()}}catch{}const snapshot=await this.connect(displayName);try{storage?.setItem(key,JSON.stringify({baseUrl:this.baseUrl,token:this.token,actorId:this.actorId}))}catch{}return snapshot}
+  async connect(displayName){const data=await this.request('/v1/session',{method:'POST',body:{displayName}});this.acceptSession(data);return data.snapshot}
+  async register({username,password,displayName},storage=globalThis.sessionStorage){const data=await this.request('/v1/account/register',{method:'POST',body:{username,password,displayName}});this.acceptSession(data,storage);return data.snapshot}
+  async login({username,password},storage=globalThis.sessionStorage){const data=await this.request('/v1/account/login',{method:'POST',body:{username,password}});this.acceptSession(data,storage);return data.snapshot}
+  async logout(storage=globalThis.sessionStorage){if(this.token)await this.request('/v1/session/revoke',{method:'POST'});this.token=null;this.actorId=null;try{storage?.removeItem('altera-authority-session-v1')}catch{}}
+  async restoreOrConnect(displayName,storage=globalThis.sessionStorage){const key='altera-authority-session-v1';try{const saved=JSON.parse(storage?.getItem(key)||'null');if(saved?.baseUrl===this.baseUrl&&saved.token&&saved.actorId&&(!saved.expiresAt||saved.expiresAt>Date.now())){this.token=saved.token;this.actorId=saved.actorId;return await this.snapshot()}}catch{}const snapshot=await this.connect(displayName);this.persistSession(storage);return snapshot}
   async join(roomId){return this.command('join_room',{roomId})}
   async leave(roomId){return this.command('leave_room',{roomId})}
   async updatePresence(roomId,{x,z,yaw}){return this.command('update_presence',{roomId,x,z,yaw,now:Date.now()})}
   async sendChat(roomId,text){return this.command('send_chat',{roomId,text,now:Date.now()})}
   async snapshot(){return this.request('/v1/snapshot')}
   async command(type,payload){if(!this.actorId)throw Error('Sosial sesjon er ikke startet');return this.request('/v1/commands',{method:'POST',body:{version:1,commandId:`cmd_${Date.now().toString(36)}_${(++this.sequence).toString(36)}`,type,payload}})}
+  acceptSession(data,storage){this.token=data.token;this.actorId=data.snapshot.player.id;this.expiresAt=data.expiresAt;if(storage)this.persistSession(storage)}
+  persistSession(storage=globalThis.sessionStorage){try{storage?.setItem('altera-authority-session-v1',JSON.stringify({baseUrl:this.baseUrl,token:this.token,actorId:this.actorId,expiresAt:this.expiresAt}))}catch{}}
   async request(path,{method='GET',body}={}){const response=await this.fetch(this.baseUrl+path,{method,headers:{'content-type':'application/json',...(this.token?{authorization:`Bearer ${this.token}`}:{})},body:body?JSON.stringify(body):undefined});const data=await response.json();if(!response.ok){const error=Error(data.error?.message||'Serverfeil');error.code=data.error?.code;throw error}return data}
 }

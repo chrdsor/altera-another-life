@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101417">
+  <meta name="description" content="ALTERA-konto for den autoritative utviklingsverdenen.">
+  <title>ALTERA · Konto</title>
+  <link rel="stylesheet" href="account.css?v=1">
+</head>
+<body>
+  <a class="brand" href="city.html" id="cityLink"><strong>ALTERA</strong><small>IDENTITY NODE 01</small></a>
+  <main>
+    <section class="identityScene" aria-hidden="true"><div class="cityMark"><i></i><i></i><i></i><i></i><i></i></div><p><span>DISTRICT 01</span><strong>Ett liv.<br>Din identitet.</strong></p></section>
+    <section class="accountPanel" aria-labelledby="accountTitle">
+      <header><span>KONTO</span><h1 id="accountTitle">Fortsett til ALTERA</h1><p id="serverState">Kontrollerer utviklingsserveren</p></header>
+      <nav class="modeSwitch" aria-label="Kontomodus"><button class="active" type="button" data-mode="login">Logg inn</button><button type="button" data-mode="register">Opprett konto</button></nav>
+      <form id="loginForm">
+        <label>Brukernavn<input id="loginUsername" name="username" autocomplete="username" minlength="3" maxlength="24" pattern="[a-zA-Z0-9_]+" required></label>
+        <label>Passord<input id="loginPassword" name="password" type="password" autocomplete="current-password" minlength="10" maxlength="128" required></label>
+        <button class="primary" type="submit">Gå inn i verdenen</button>
+      </form>
+      <form id="registerForm" hidden>
+        <label>Visningsnavn<input id="displayName" name="displayName" autocomplete="nickname" minlength="2" maxlength="32" required></label>
+        <label>Brukernavn<input id="registerUsername" name="username" autocomplete="username" minlength="3" maxlength="24" pattern="[a-zA-Z0-9_]+" required></label>
+        <label>Passord<input id="registerPassword" name="new-password" type="password" autocomplete="new-password" minlength="10" maxlength="128" required></label>
+        <label>Gjenta passord<input id="confirmPassword" name="confirm-password" type="password" autocomplete="new-password" minlength="10" maxlength="128" required></label>
+        <button class="primary" type="submit">Opprett identitet</button>
+      </form>
+      <footer><span id="securityState">Passord beskyttes med scrypt. Sesjonen varer i sju dager.</span><a id="guestLink" href="city.html">Fortsett som gjest</a></footer>
+    </section>
+  </main>
+  <div class="serverNotice" id="serverNotice" hidden><strong>Ingen autoritetsserver valgt</strong><span>Konto krever den lokale utviklingsserveren. Du kan fortsatt bruke den publiserte soloprototypen.</span><a href="city.html">Fortsett til District 01</a></div>
+  <div id="toast" hidden role="status"></div>
+  <script type="module" src="account.js?v=1"></script>
+</body>
+</html>

@@ -16,7 +16,7 @@ Night Lounge, District 01 and First Home are actual Three.js scenes. The city ve
 
 1. Replace procedural hero furniture and architectural primitives with licensed, optimized production assets and authored lightmaps.
 2. Finish the avatar art pass: hero head, skin maps, separate eye stack, hair cards and garment weight-paint/clipping tests.
-3. Add an authoritative online service for identity, property, inventory, economy and social presence before any real ownership claims.
+3. Deploy the development authority behind TLS and replace its local account system with a production identity provider before any real ownership claims.
 4. Expand First Home with surface-aware placement, wall objects, color/material variants, undo and accessible object controls.
 5. Connect the completed move-in objective to the next playable chapter, residents and repeatable city activities.
 6. Add a real browser performance and visual regression matrix for representative iOS, Android and desktop GPUs.
@@ -30,9 +30,9 @@ Night Lounge, District 01 and First Home are actual Three.js scenes. The city ve
 
 ## Runtime boundaries
 
-The browser owns presentation, input prediction, camera and interpolation. The development authority in `server/` now owns validated room membership, rate-limited chat, presence, starter homes, furniture commands, access control, inventory and escrow-style listings. Marketplace payments use balanced integer-money debit and credit postings from `server/economy-ledger.mjs`; SQLite migration 2 mirrors accounts, inventory, listings, transactions and entries into normalized tables. `social-client.js` can carry one development session across Night Lounge, City Exchange, First Home and Construction through `?authority=<server-url>`, while static pages remain honest local or read-only previews.
+The browser owns presentation, input prediction, camera and interpolation. The development authority in `server/` now owns registered development accounts, sessions, validated room membership, rate-limited chat, presence, starter homes, furniture commands, access control, inventory and escrow-style listings. Marketplace payments use balanced integer-money debit and credit postings from `server/economy-ledger.mjs`; SQLite migration 4 persists identity accounts, sessions, economy and world state in normalized tables. `social-client.js` can carry one account or guest session across Night Lounge, City Exchange, First Home and Construction through `?authority=<server-url>`, while static pages remain honest local or read-only previews.
 
-The dependency-free Node development service uses normalized SQLite rows as the canonical world load path. A compatibility snapshot remains for migrations, but tests corrupt it before restart to prove that players, property, rooms, economy and idempotency restore from normalized state. Development session tokens are SHA-256 hashed at rest and survive process restarts. This proves contracts and development persistence, but is not production infrastructure: it still needs external identity, multi-process concurrency, WebSocket transport, moderation storage, deployment, backups and operational security before public multiplayer.
+The dependency-free Node development service uses normalized SQLite rows as the canonical world load path. A compatibility snapshot remains for migrations, but tests corrupt it before restart to prove that players, property, rooms, economy and idempotency restore from normalized state. Account passwords use salted scrypt hashes. Seven-day development session tokens are SHA-256 hashed at rest, survive process restarts, expire and can be revoked. This proves contracts and development persistence, but is not production infrastructure: it still needs an external identity provider, recovery and MFA, multi-process concurrency, WebSocket transport, moderation storage, deployment, backups and operational security before public multiplayer.
 
 ## Character contract
 
@@ -56,6 +56,7 @@ node --check rigged-avatar.js
 node --check world.js
 node --check city.js
 node --check home.js
+node --check account.js
 node world-domain.test.mjs
 node city-state.test.mjs
 node home-state.test.mjs

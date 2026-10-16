@@ -23,6 +23,8 @@ const buildJs=read('build.js');
 const constructionStateJs=read('construction-state.js');
 const marketHtml=read('market.html');
 const marketJs=read('market.js');
+const accountHtml=read('account.html');
+const accountJs=read('account.js');
 const ledgerJs=read('server/economy-ledger.mjs');
 const sqliteStoreJs=read('server/sqlite-store.mjs');
 
@@ -36,6 +38,7 @@ requireDomContract(cityHtml,cityJs,'District 01');
 requireDomContract(homeHtml,homeJs,'First Home');
 requireDomContract(buildHtml,buildJs,'Construction');
 requireDomContract(marketHtml,marketJs,'City Exchange');
+requireDomContract(accountHtml,accountJs,'Account');
 assert(studioHtml.includes('href="world.html"'),'Studio må lenke til spillverdenen');
 assert(worldHtml.includes('href="avatar-studio.html"'),'Spillverdenen må lenke tilbake til Studio');
 assert(worldHtml.includes('href="city.html"'),'Night Lounge må lenke til District 01');
@@ -43,9 +46,11 @@ assert(cityHtml.includes('href="world.html"')&&cityHtml.includes('href="avatar-s
 assert(cityHtml.includes('href="home.html"'),'District 01 må lenke til First Home');
 assert(cityHtml.includes('href="build.html"'),'District 01 må lenke til byggeverktøyet');
 assert(cityHtml.includes('href="market.html"'),'District 01 må lenke til City Exchange');
+assert(cityHtml.includes('href="account.html"'),'District 01 må lenke til Account');
 assert(homeHtml.includes('href="city.html"')&&homeHtml.includes('href="avatar-studio.html"'),'First Home må lenke til District 01 og Studio');
 assert(buildHtml.includes('href="city.html"')&&buildHtml.includes('href="home.html"'),'Byggeverktøyet må lenke til District 01 og First Home');
 assert(marketHtml.includes('href="city.html"'),'City Exchange må lenke tilbake til District 01');
+assert(accountHtml.includes('href="city.html"'),'Account må lenke tilbake til District 01');
 assert(stateJs.includes("altera-avatar-reference-v3"),'Felles avatarstate mangler stabil lagringsnøkkel');
 assert(studioJs.includes("from './avatar-state.js?v=1'"),'Studio bruker ikke felles avatarstate-modul');
 assert(worldJs.includes("from './avatar-state.js?v=1'"),'Spillet bruker ikke felles avatarstate-modul');
@@ -74,7 +79,7 @@ assert(worldJs.includes("from './social-client.js?v=1'")&&worldJs.includes('sync
 assert(socialClientJs.includes("update_presence")&&socialClientJs.includes("send_chat"),'Sosialklienten mangler nærvær eller chat');
 for(const feature of ['purchaseListing','placeFurniture','setAccess','sendChat'])assert(authorityJs.includes(feature),'Autoritetsserveren mangler domenehandling: '+feature);
 for(const feature of ['postTransfer','normalizeLedger','accountTransactions'])assert(ledgerJs.includes(feature),'Dobbelbokført økonomi mangler: '+feature);
-for(const table of ['world_meta','players','homes','home_access','home_items','construction_states','rooms','room_members','room_presence','room_messages','processed_commands','development_sessions','economy_accounts','inventory_items','marketplace_listings','economic_transactions','ledger_entries'])assert(sqliteStoreJs.includes(table),'SQLite mangler normalisert tabell: '+table);
+for(const table of ['world_meta','players','homes','home_access','home_items','construction_states','rooms','room_members','room_presence','room_messages','processed_commands','development_sessions','identity_accounts','economy_accounts','inventory_items','marketplace_listings','economic_transactions','ledger_entries'])assert(sqliteStoreJs.includes(table),'SQLite mangler normalisert tabell: '+table);
 assert(sqliteStoreJs.includes('loadNormalized')&&sqliteStoreJs.includes('loadSessions'),'SQLite mangler kanonisk normalisert innlasting eller varige sesjoner');
 assert(httpServerJs.includes("'/v1/commands'")&&httpServerJs.includes('actor_mismatch'),'HTTP-laget må beskytte aktøridentitet');
 assert(cityStateJs.includes("altera-district-01-state-v2")&&cityJs.includes('saveCityState'),'Byens progresjon må bruke validert District 01-state');
@@ -100,6 +105,8 @@ for(const feature of ['placementError','placeModule','removeModule','rotateModul
 for(const feature of ['createModuleVisual','movePreview','placePreview','renderModules'])assert(buildJs.includes(feature),'3D-byggeverktøyet mangler: '+feature);
 assert(buildHtml.includes('id="buildObjective"')&&buildHtml.includes('id="budgetValue"'),'Byggeverktøyet mangler mål eller budsjett');
 for(const feature of ['create_listing','cancel_listing','purchase_listing','transactionList'])assert(marketJs.includes(feature)||marketHtml.includes(feature),'City Exchange mangler handelsflyt: '+feature);
+for(const feature of ["'/v1/account/register'","'/v1/account/login'","'/v1/session/revoke'",'scryptSync','timingSafeEqual'])assert(httpServerJs.includes(feature),'Identitetstjenesten mangler: '+feature);
+for(const feature of ['.register(','.login('])assert(accountJs.includes(feature),'Account mangler klientflyt: '+feature);
 assert(rigJs.includes("availableOptions"),'Studio må kunne deaktivere plagg som modellen ikke har');
 assert(rigJs.includes("iris|eye_color|pupil"),'Irisfarge må være adskilt fra hornhinne og sclera');
 assert(!rigJs.includes("eyes:/iris|eyeball"),'Hornhinne/øyeball må ikke arve irisfargen');
@@ -111,6 +118,6 @@ assert(!homeHtml.includes('user_files/'),'Referansebilder må ikke publiseres');
 assert(!buildHtml.includes('user_files/'),'Referansebilder må ikke publiseres');
 for(const category of ['Ansikt','Hår','Kropp','Klær','Farger'])assert(studioJs.includes(category),'Mangler Studio-kategori: '+category);
 
-for(const [label,html] of [['Studio',studioHtml],['Night Lounge',worldHtml],['District 01',cityHtml],['First Home',homeHtml],['Construction',buildHtml],['City Exchange',marketHtml]]){const all=[...html.matchAll(/\bid=["']([^"']+)["']/g)].map(match=>match[1]),duplicates=all.filter((id,index)=>all.indexOf(id)!==index);assert.deepStrictEqual(duplicates,[],label+' har dupliserte DOM-ID-er: '+duplicates.join(', '))}
+for(const [label,html] of [['Studio',studioHtml],['Night Lounge',worldHtml],['District 01',cityHtml],['First Home',homeHtml],['Construction',buildHtml],['City Exchange',marketHtml],['Account',accountHtml]]){const all=[...html.matchAll(/\bid=["']([^"']+)["']/g)].map(match=>match[1]),duplicates=all.filter((id,index)=>all.indexOf(id)!==index);assert.deepStrictEqual(duplicates,[],label+' har dupliserte DOM-ID-er: '+duplicates.join(', '))}
 
-console.log('App contracts passed: validated Studio, Lounge, District 01, First Home and Construction state, avatar, physics, progression and DOM bindings.');
+console.log('App contracts passed: validated Studio, Lounge, District 01, First Home, Construction, Exchange and Account contracts.');

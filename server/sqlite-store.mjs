@@ -32,6 +32,12 @@ export class SQLiteWorldStore{
       ALTER TABLE marketplace_listings ADD COLUMN seller_name TEXT;
       ALTER TABLE marketplace_listings ADD COLUMN created_order INTEGER NOT NULL DEFAULT 0;
       INSERT INTO schema_migrations(version,applied_at) VALUES(3,datetime('now')); COMMIT;`);
+    if(current<4)this.db.exec(`BEGIN IMMEDIATE;
+      CREATE TABLE IF NOT EXISTS identity_accounts(username TEXT PRIMARY KEY, player_id TEXT NOT NULL UNIQUE, password_salt TEXT NOT NULL, password_hash TEXT NOT NULL, created_at INTEGER NOT NULL);
+      ALTER TABLE development_sessions ADD COLUMN expires_at INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE development_sessions ADD COLUMN revoked INTEGER NOT NULL DEFAULT 0 CHECK(revoked IN(0,1));
+      UPDATE development_sessions SET expires_at=(CAST(strftime('%s','now') AS INTEGER)*1000)+604800000 WHERE expires_at=0;
+      INSERT INTO schema_migrations(version,applied_at) VALUES(4,datetime('now')); COMMIT;`);
   }
   load(){
     if(this.db.prepare("SELECT 1 FROM world_meta WHERE id='primary'").get())return this.loadNormalized();
@@ -70,8 +76,11 @@ export class SQLiteWorldStore{
       for(const[commandId,result]of state.processed)processedCommand.run(commandId,JSON.stringify(result));this.db.exec('COMMIT');
     }catch(error){this.db.exec('ROLLBACK');throw error}
   }
-  loadSessions(){return new Map(this.db.prepare('SELECT token_hash,actor_id FROM development_sessions WHERE actor_id IN(SELECT id FROM players)').all().map(row=>[row.token_hash,row.actor_id]))}
-  saveSession(tokenHash,actorId,now=Date.now()){this.db.prepare('INSERT INTO development_sessions(token_hash,actor_id,created_at,last_seen_at) VALUES(?,?,?,?) ON CONFLICT(token_hash) DO UPDATE SET actor_id=excluded.actor_id,last_seen_at=excluded.last_seen_at').run(tokenHash,actorId,now,now)}
-  touchSession(tokenHash,now=Date.now()){this.db.prepare('UPDATE development_sessions SET last_seen_at=? WHERE token_hash=?').run(now,tokenHash)}
+  loadSessions(now=Date.now()){return new Map(this.db.prepare('SELECT token_hash,actor_id,expires_at FROM development_sessions WHERE revoked=0 AND expires_at>? AND actor_id IN(SELECT id FROM players)').all(now).map(row=>[row.token_hash,{actorId:row.actor_id,expiresAt:row.expires_at}]))}
+  saveSession(tokenHash,actorId,now=Date.now(),expiresAt=now+604_800_000){this.db.prepare('INSERT INTO development_sessions(token_hash,actor_id,created_at,last_seen_at,expires_at,revoked) VALUES(?,?,?,?,?,0) ON CONFLICT(token_hash) DO UPDATE SET actor_id=excluded.actor_id,last_seen_at=excluded.last_seen_at,expires_at=excluded.expires_at,revoked=0').run(tokenHash,actorId,now,now,expiresAt)}
+  touchSession(tokenHash,now=Date.now()){this.db.prepare('UPDATE development_sessions SET last_seen_at=? WHERE token_hash=? AND revoked=0').run(now,tokenHash)}
+  revokeSession(tokenHash){this.db.prepare('UPDATE development_sessions SET revoked=1 WHERE token_hash=?').run(tokenHash)}
+  createAccount({username,playerId,passwordSalt,passwordHash,createdAt=Date.now()}){this.db.prepare('INSERT INTO identity_accounts(username,player_id,password_salt,password_hash,created_at) VALUES(?,?,?,?,?)').run(username,playerId,passwordSalt,passwordHash,createdAt)}
+  findAccount(username){return this.db.prepare('SELECT username,player_id AS playerId,password_salt AS passwordSalt,password_hash AS passwordHash,created_at AS createdAt FROM identity_accounts WHERE username=?').get(username)||null}
   close(){this.db.close()}
 }
