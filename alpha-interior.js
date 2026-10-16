@@ -43,7 +43,7 @@ function interact(){
 }
 function tick(now){const dt=Math.min((now-last)/1000,.05);last=now;const x=Number(keys.has('KeyD')||keys.has('ArrowRight'))-Number(keys.has('KeyA')||keys.has('ArrowLeft')),z=Number(keys.has('KeyS')||keys.has('ArrowDown'))-Number(keys.has('KeyW')||keys.has('ArrowUp'));const len=Math.hypot(x,z);
  if(len){const dx=(Math.cos(yaw)*x-Math.sin(yaw)*z)/len*3*dt,dz=(Math.sin(yaw)*x+Math.cos(yaw)*z)/len*3*dt;const p=avatar.position;if(pass(p.x+dx,p.z))p.x+=dx;if(pass(p.x,p.z+dz))p.z+=dz;avatar.rotation.y=-yaw}
- const p=avatar.position;camera.position.lerp(new T.Vector3(p.x+Math.sin(yaw)*3,2.9,p.z+Math.cos(yaw)*3),1-Math.exp(-dt*7));camera.lookAt(p.x,1.3,p.z);
+ const p=avatar.position;const moving=len>0;const bob=moving?Math.sin(now*.012)*.025:0;avatar.children[0].position.y=1+bob;avatar.children[1].position.y=1.73+bob*.4;camera.position.lerp(new T.Vector3(p.x+Math.sin(yaw)*3,2.9,p.z+Math.cos(yaw)*3),1-Math.exp(-dt*7));camera.lookAt(p.x,1.3,p.z);
  near=[...targets].filter(t=>Math.hypot(t.x-p.x,t.z-p.z)<2.1).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.z)-Math.hypot(b.x-p.x,b.z-p.z))[0]||null;$('action').disabled=!near;$('action').textContent=near?.label||'Samhandle';$('hint').textContent=near?near.label:'Utforsk rommet og finn interaksjonspunktene';$('objective').textContent=room==='cafe'?questObjective(quest):(unlocked()?(placed?'Postkort plassert ✓':'Heng opp havnepostkortet'):'Fullfør velkomstoppdraget hos Maja');
  renderer.render(scene,camera);requestAnimationFrame(tick)}
 $('action').onclick=interact;
