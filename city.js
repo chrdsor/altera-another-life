@@ -24,9 +24,9 @@ for(const spot of interactiveSpots)spot.completed=completedSpots.has(spot.id);
 boot().catch(error=>{$('loadingDetail').textContent='Kunne ikke starte byen: '+(error?.message||'ukjent feil');$('loading').querySelector('span').hidden=true});
 
 async function boot(){
-  setupPageLinks();$('loadingDetail').textContent='Starter fysikk';await RAPIER.init();setupRenderer();physics=new RAPIER.World({x:0,y:-9.81,z:0});
+  setupPageLinks();$('loadingDetail').textContent='Starter fysikk';await Promise.race([RAPIER.init(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Fysikkmotoren svarte ikke innen 12 sekunder')),12000))]);setupRenderer();physics=new RAPIER.World({x:0,y:-9.81,z:0});
   $('loadingDetail').textContent='Bygger havnefronten';buildCity();applyCityStateToWorld();setupPlayerPhysics();setupInput();applyWorldSettings();updateObjective();
-  $('loadingDetail').textContent='Laster avataren din';await loadAvatar().catch(error=>{console.warn('ALTERA: avatar fallback',error);createFallbackAvatar();});$('loading').hidden=true;requestAnimationFrame(frame);
+  $('loadingDetail').textContent='Laster avataren din';await Promise.race([loadAvatar(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Avataren brukte for lang tid på å laste')),10000))]).catch(error=>{console.warn('ALTERA: avatar fallback',error);createFallbackAvatar();});$('loading').hidden=true;requestAnimationFrame(frame);
 }
 
 function setupRenderer(){
