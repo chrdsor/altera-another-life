@@ -1,0 +1,30 @@
+name: ALTERA Browser Smoke Test
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feature/first-living-district-quest]
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: npm install --no-save @playwright/test
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Test full quest in Chromium
+        run: npx playwright test tests/alpha-browser.spec.mjs --workers=1
+      - name: Upload failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-test-evidence
+          path: test-results/
+          if-no-files-found: ignore
