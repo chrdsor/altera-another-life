@@ -28,7 +28,7 @@ if(i.kind==='lamp'){box(.42,.09,.42,0,.06,0,metal,g);box(.07,1.55,.07,0,.83,0,me
 if(i.kind==='shelf'){for(const y of [.2,1,1.8])box(1.6,.1,.55,0,y,0,wood,g);for(const x of [-.75,.75])box(.09,2,.55,x,1,0,metal,g)}
 if(i.kind==='plant'){box(.48,.5,.48,0,.25,0,wood,g);const leaves=new THREE.Mesh(new THREE.SphereGeometry(.5,10,8),green);leaves.position.y=1.1;g.add(leaves)}
 scene.add(g);return g}
-function save(){try{localStorage.setItem(KEY,JSON.stringify([...objects.values()]))}catch{status.textContent='Kunne ikke lagre lokalt.'}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify([...objects.values()].map(({id,kind,x,z,turn})=>({id,kind,x,z,turn}))))}catch{status.textContent='Kunne ikke lagre lokalt.'}}
 function add(i,persist=true){objects.set(i.id,i);i.mesh=furniture(i);if(persist)save()}
 function remove(id){const i=objects.get(id);if(!i)return;scene.remove(i.mesh);i.mesh.traverse(o=>{o.geometry?.dispose()});objects.delete(id);if(selectedId===id)selectedId=null;save()}
 try{const data=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(data))for(const item of data.slice(0,MAX)){if(validItem(item)&&!objects.has(item.id)&&fits(item))add({...item},false)}}catch{status.textContent='Tidligere møblering kunne ikke leses.'}
