@@ -1,4 +1,5 @@
 import * as T from 'three';
+import {buildHarborScene} from './alpha-harbor-art.mjs';
 import {setupDistrictPhone} from './alpha-phone.mjs';
 import {districtPlaces} from './alpha-wayfinding.mjs';
 import {makeWorldLabel,createDistrictMap} from './alpha-map-ui.mjs';
@@ -14,9 +15,9 @@ const spots=[{id:'quay',name:'Nordkaien',description:'Se utover havnen',x:-5,z:-
 let scene,camera,renderer,player,last=performance.now(),yaw=0,drag=false,dragX=0,near=null,frameId=0;const walkers=[];const keys=new Set(),obstacles=[];let drawMap=()=>null,drawFullMap=()=>null,mapLast=0,selectedDestination=null;
 function say(message){status.hidden=false;status.textContent=message;clearTimeout(say.timer);say.timer=setTimeout(()=>status.hidden=true,3200)}
 function box(w,h,d,x,y,z,color,solid=false){const mesh=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshStandardMaterial({color,roughness:.78}));mesh.position.set(x,y,z);scene.add(mesh);if(solid)obstacles.push({x,z,w,d});return mesh}
-function build(){scene=new T.Scene();scene.background=new T.Color(0x94afc4);scene.fog=new T.Fog(0x94afc4,45,125);camera=new T.PerspectiveCamera(63,innerWidth/innerHeight,.1,140);renderer=new T.WebGLRenderer({antialias:false,powerPreference:'default'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.25));renderer.setSize(innerWidth,innerHeight);document.body.prepend(renderer.domElement);
-scene.add(new T.HemisphereLight(0xe4edff,0x556071,2));const sun=new T.DirectionalLight(0xffe6bb,2.2);sun.position.set(-12,24,-20);scene.add(sun);
-box(23,.25,90,0,-.15,-29,0x53616a);box(6,.08,90,1,-.02,-29,0x78848a);box(7,.07,90,-8,-.04,-29,0x2d485a);
+function build(){scene=new T.Scene();scene.background=new T.Color(0xb7a6a0);scene.fog=new T.Fog(0xb7a6a0,52,120);camera=new T.PerspectiveCamera(63,innerWidth/innerHeight,.1,140);renderer=new T.WebGLRenderer({antialias:false,powerPreference:'default'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.25));renderer.setSize(innerWidth,innerHeight);document.body.prepend(renderer.domElement);
+scene.add(new T.HemisphereLight(0xe4edff,0x556071,2));const sun=new T.DirectionalLight(0xffd3a0,2.0);sun.position.set(-12,24,-20);scene.add(sun);
+box(23,.25,90,0,-.15,-29,0x53616a);box(6,.08,90,1,-.02,-29,0x78848a);box(7,.07,90,-8,-.04,-29,0x2d485a);buildHarborScene(T,scene);
 for(let z=8;z>-72;z-=13){box(5,3.5+(Math.abs(z)%3),6,9,2,z,0xc4a997,true);box(4,4.3,6,-12,2.1,z,0x9cabb0,true);const houseNumber=2+Math.round((8-z)/13)*2;for(const side of [-1,1]){const address=makeWorldLabel(T,'Havneveien '+(houseNumber+(side===1?1:0)),'District 01','#b4cad8',.48);address.position.set(side===1?6.35:-9.6,2.6,z);scene.add(address)}for(let x of [-10,8]){const lamp=box(.12,3,.12,x,1.5,z-4,0x29323a);box(.55,.25,.55,x,3.05,z-4,0xffdd9e)}}
 for(let z=5;z>-72;z-=7){box(.09,.02,2,1,.02,z,0xe4dfca)}
 for(let i=0;i<8;i++){const npc=new T.Group(),coat=new T.Mesh(new T.CapsuleGeometry(.23,.65,5,9),new T.MeshStandardMaterial({color:[0x886e62,0x566e82,0x75886e,0x9c7d66][i%4]})),face=new T.Mesh(new T.SphereGeometry(.18,10,8),new T.MeshStandardMaterial({color:0xd7a282}));coat.position.y=.95;face.position.y=1.65;npc.add(coat,face);npc.position.set(i%2===0?-3.4:3.6,0,4-i*8.5);npc.userData={origin:npc.position.z,phase:i*.7};scene.add(npc);walkers.push(npc)}
