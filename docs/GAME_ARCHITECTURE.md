@@ -32,7 +32,7 @@ Night Lounge, District 01 and First Home are actual Three.js scenes. The city ve
 
 The browser owns presentation, input prediction, camera and interpolation. The development authority in `server/` now owns validated room membership, rate-limited chat, presence, starter homes, furniture commands, access control, inventory and escrow-style listings. Marketplace payments use balanced integer-money debit and credit postings from `server/economy-ledger.mjs`; SQLite migration 2 mirrors accounts, inventory, listings, transactions and entries into normalized tables. `social-client.js` can carry one development session across Night Lounge, City Exchange, First Home and Construction through `?authority=<server-url>`, while static pages remain honest local or read-only previews.
 
-The dependency-free Node development service persists validated world snapshots through the built-in SQLite module and has a restart/idempotency test. It proves contracts, end-to-end HTTP behavior and development persistence, but is not production infrastructure: it still needs a normalized transactional schema, real authentication, WebSocket transport, moderation storage, deployment, backups and operational security before public multiplayer.
+The dependency-free Node development service uses normalized SQLite rows as the canonical world load path. A compatibility snapshot remains for migrations, but tests corrupt it before restart to prove that players, property, rooms, economy and idempotency restore from normalized state. Development session tokens are SHA-256 hashed at rest and survive process restarts. This proves contracts and development persistence, but is not production infrastructure: it still needs external identity, multi-process concurrency, WebSocket transport, moderation storage, deployment, backups and operational security before public multiplayer.
 
 ## Character contract
 
@@ -63,6 +63,8 @@ node construction-state.test.mjs
 node server/authoritative-world.test.mjs
 node server/http-server.test.mjs
 node server/sqlite-store.test.mjs
+node server/sqlite-migration.test.mjs
+node server/http-session-restart.test.mjs
 node social-client.test.mjs
 node scripts/check-app-contracts.cjs
 node scripts/check-avatar-state.mjs

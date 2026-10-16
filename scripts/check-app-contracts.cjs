@@ -74,7 +74,8 @@ assert(worldJs.includes("from './social-client.js?v=1'")&&worldJs.includes('sync
 assert(socialClientJs.includes("update_presence")&&socialClientJs.includes("send_chat"),'Sosialklienten mangler nærvær eller chat');
 for(const feature of ['purchaseListing','placeFurniture','setAccess','sendChat'])assert(authorityJs.includes(feature),'Autoritetsserveren mangler domenehandling: '+feature);
 for(const feature of ['postTransfer','normalizeLedger','accountTransactions'])assert(ledgerJs.includes(feature),'Dobbelbokført økonomi mangler: '+feature);
-for(const table of ['economy_accounts','inventory_items','marketplace_listings','economic_transactions','ledger_entries'])assert(sqliteStoreJs.includes(table),'SQLite mangler normalisert tabell: '+table);
+for(const table of ['world_meta','players','homes','home_access','home_items','construction_states','rooms','room_members','room_presence','room_messages','processed_commands','development_sessions','economy_accounts','inventory_items','marketplace_listings','economic_transactions','ledger_entries'])assert(sqliteStoreJs.includes(table),'SQLite mangler normalisert tabell: '+table);
+assert(sqliteStoreJs.includes('loadNormalized')&&sqliteStoreJs.includes('loadSessions'),'SQLite mangler kanonisk normalisert innlasting eller varige sesjoner');
 assert(httpServerJs.includes("'/v1/commands'")&&httpServerJs.includes('actor_mismatch'),'HTTP-laget må beskytte aktøridentitet');
 assert(cityStateJs.includes("altera-district-01-state-v2")&&cityJs.includes('saveCityState'),'Byens progresjon må bruke validert District 01-state');
 assert(cityJs.includes("from './city-state.js?v=1'"),'Byen må bruke den testbare distriktsmodulen');

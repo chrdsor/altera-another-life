@@ -13,13 +13,13 @@ export class DomainError extends Error{
 }
 
 export class AuthoritativeWorld{
-  constructor(){this.players=new Map();this.homes=new Map();this.builds=new Map();this.rooms=new Map();this.listings=new Map();this.ledger=[];this.processed=new Map();this.sequence=0}
+  constructor(){this.players=new Map();this.homes=new Map();this.builds=new Map();this.rooms=new Map();this.listings=new Map();this.ledger=[];this.processed=new Map();this.sequence=0;this.revision=0}
   registerPlayer({id,displayName}){
     if(!isId(id)||this.players.has(id))throw new DomainError('invalid_player','Spiller-ID er ugyldig eller opptatt');
     const name=cleanName(displayName);if(name.length<2)throw new DomainError('invalid_name','Visningsnavnet er for kort');
     const player={id,displayName:name,balanceMinor:2500,inventory:starterInventory(),homeId:`home_${id}`,lastChatAt:0};
     const home={id:player.homeId,ownerId:id,settlementId:'city_01',version:1,visitors:[],editors:[],items:[]};
-    this.players.set(id,player);this.homes.set(home.id,home);this.builds.set(id,normalizeConstructionState());return this.playerSnapshot(id);
+    this.players.set(id,player);this.homes.set(home.id,home);this.builds.set(id,normalizeConstructionState());this.revision++;return this.playerSnapshot(id);
   }
   playerSnapshot(id){const player=this.requirePlayer(id),home=this.homes.get(player.homeId),construction=this.builds.get(id),listings=[...this.listings.values()].filter(listing=>listing.status==='open');return clone({player,home,construction,market:{listings,transactions:accountTransactions(this.ledger,id)},rooms:[...this.rooms.values()].filter(room=>room.members.includes(id)).map(room=>this.roomSnapshot(room))})}
   execute(command){
@@ -37,7 +37,7 @@ export class AuthoritativeWorld{
     else if(command.type==='purchase_listing')data=this.purchaseListing(command.actorId,command.payload);
     else if(command.type==='request_build')data=this.requestBuild(command.actorId,command.payload);
     else throw new DomainError('not_implemented','Kommandoen er ikke implementert',501);
-    const result={version:SCHEMA_VERSION,commandId:command.commandId,ok:true,data};this.processed.set(command.commandId,result);return clone(result);
+    const result={version:SCHEMA_VERSION,commandId:command.commandId,revision:++this.revision,ok:true,data};this.processed.set(command.commandId,result);return clone(result);
   }
   joinRoom(actorId,{roomId}){if(!isId(roomId))throw new DomainError('invalid_room','Ugyldig rom');for(const room of this.rooms.values())if(room.id!==roomId)this.removeFromRoom(room,actorId);const room=this.rooms.get(roomId)||{id:roomId,members:[],messages:[],presence:{}};if(!room.members.includes(actorId))room.members.push(actorId);room.presence[actorId]||={x:0,z:0,yaw:0,updatedAt:0};this.rooms.set(roomId,room);return clone({roomId,members:room.members})}
   leaveRoom(actorId,{roomId}){const room=this.rooms.get(roomId);if(!room)throw new DomainError('invalid_room','Ugyldig rom');this.removeFromRoom(room,actorId);return{roomId,left:true}}
@@ -64,8 +64,8 @@ export class AuthoritativeWorld{
   requireHome(id){const value=this.homes.get(id);if(!value)throw new DomainError('home_not_found','Boligen finnes ikke',404);return value}
   removeFromRoom(room,actorId){room.members=room.members.filter(id=>id!==actorId);if(room.presence)delete room.presence[actorId]}
   roomSnapshot(room){return{id:room.id,members:room.members.map(id=>({id,displayName:this.players.get(id)?.displayName||'Ukjent',presence:room.presence?.[id]||null})),messages:room.messages}}
-  exportState(){return clone({version:1,sequence:this.sequence,players:[...this.players],homes:[...this.homes],builds:[...this.builds],rooms:[...this.rooms],listings:[...this.listings],ledger:this.ledger,processed:[...this.processed]})}
-  static fromState(state){const world=new AuthoritativeWorld();if(!state||state.version!==1)return world;for(const key of['players','homes','builds','rooms','listings','processed'])world[key]=new Map(Array.isArray(state[key])?state[key]:[]);world.ledger=normalizeLedger(state.ledger);world.sequence=Number.isSafeInteger(state.sequence)?state.sequence:0;return world}
+  exportState(){return clone({version:1,sequence:this.sequence,revision:this.revision,players:[...this.players],homes:[...this.homes],builds:[...this.builds],rooms:[...this.rooms],listings:[...this.listings],ledger:this.ledger,processed:[...this.processed]})}
+  static fromState(state){const world=new AuthoritativeWorld();if(!state||state.version!==1)return world;for(const key of['players','homes','builds','rooms','listings','processed'])world[key]=new Map(Array.isArray(state[key])?state[key]:[]);world.ledger=normalizeLedger(state.ledger);world.sequence=Number.isSafeInteger(state.sequence)?state.sequence:0;world.revision=Number.isSafeInteger(state.revision)?state.revision:world.processed.size+world.players.size;return world}
 }
 
 function toggle(values,id,on){const next=new Set(values);if(on)next.add(id);else next.delete(id);return [...next]}

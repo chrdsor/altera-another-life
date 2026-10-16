@@ -1,10 +1,10 @@
 import http from 'node:http';
-import {randomUUID} from 'node:crypto';
+import {createHash,randomUUID} from 'node:crypto';
 import {AuthoritativeWorld,DomainError} from './authoritative-world.mjs';
 import {SQLiteWorldStore} from './sqlite-store.mjs';
 
 export function createAlteraServer({world=new AuthoritativeWorld(),store=null,allowedOrigin=process.env.ALTERA_ORIGIN||'http://localhost:8080'}={}){
-  const sessions=new Map();
+  const sessions=store?.loadSessions?.()||new Map();
   const server=http.createServer(async(request,response)=>{
     setHeaders(response,allowedOrigin);
     if(request.method==='OPTIONS'){response.writeHead(204);response.end();return}
@@ -13,9 +13,9 @@ export function createAlteraServer({world=new AuthoritativeWorld(),store=null,al
       if(request.method==='GET'&&url.pathname==='/health')return json(response,200,{ok:true,service:'altera-authority-dev',persistence:store?'sqlite':'memory'});
       if(request.method==='POST'&&url.pathname==='/v1/session'){
         const body=await readJson(request),id=`player_${randomUUID().replaceAll('-','').slice(0,12)}`,token=randomUUID();
-        const snapshot=world.registerPlayer({id,displayName:body.displayName});sessions.set(token,id);store?.save(world);return json(response,201,{token,snapshot});
+        const snapshot=world.registerPlayer({id,displayName:body.displayName}),key=sessionKey(token);sessions.set(key,id);store?.save(world);store?.saveSession?.(key,id);return json(response,201,{token,snapshot});
       }
-      const actorId=authenticate(request,sessions);
+      const{actorId,key}=authenticate(request,sessions);store?.touchSession?.(key);
       if(request.method==='GET'&&url.pathname==='/v1/snapshot')return json(response,200,world.playerSnapshot(actorId));
       if(request.method==='POST'&&url.pathname==='/v1/commands'){
         const body=await readJson(request);if(body.actorId&&body.actorId!==actorId)throw new DomainError('actor_mismatch','Sesjonen kan bare handle som seg selv',403);
@@ -27,7 +27,8 @@ export function createAlteraServer({world=new AuthoritativeWorld(),store=null,al
   return{server,world,sessions};
 }
 
-function authenticate(request,sessions){const value=request.headers.authorization||'',token=value.startsWith('Bearer ')?value.slice(7):'',actorId=sessions.get(token);if(!actorId)throw new DomainError('unauthorized','Ugyldig eller manglende sesjon',401);return actorId}
+function authenticate(request,sessions){const value=request.headers.authorization||'',token=value.startsWith('Bearer ')?value.slice(7):'',key=sessionKey(token),actorId=sessions.get(key);if(!actorId)throw new DomainError('unauthorized','Ugyldig eller manglende sesjon',401);return{actorId,key}}
+function sessionKey(token){return createHash('sha256').update(String(token)).digest('hex')}
 function readJson(request){return new Promise((resolve,reject)=>{let raw='';request.setEncoding('utf8');request.on('data',chunk=>{raw+=chunk;if(raw.length>32_000){const error=Error('Forespørselen er for stor');error.code='invalid_json';reject(error);request.destroy()}});request.on('end',()=>{try{resolve(raw?JSON.parse(raw):{})}catch{const error=Error('Ugyldig JSON');error.code='invalid_json';reject(error)}});request.on('error',reject)})}
 function setHeaders(response,allowedOrigin){response.setHeader('Content-Type','application/json; charset=utf-8');response.setHeader('Cache-Control','no-store');response.setHeader('Access-Control-Allow-Origin',allowedOrigin);response.setHeader('Access-Control-Allow-Headers','authorization,content-type');response.setHeader('Access-Control-Allow-Methods','GET,POST,OPTIONS')}
 function json(response,status,value){response.writeHead(status);response.end(JSON.stringify(value))}
