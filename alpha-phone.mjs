@@ -3,7 +3,7 @@ export function setupDistrictPhone({getQuest,onNavigate,onMapOpen}){
  const $=id=>document.getElementById(id);
  const phone=$('phone'),toggle=$('phone-toggle'),close=$('phone-close');
  let selected=null,tab='missions';
- function show(open){phone.hidden=!open;toggle.setAttribute('aria-expanded',String(open));if(open)render()}
+ function show(open){if(open)document.dispatchEvent(new Event('altera:overlay-open'));phone.hidden=!open;toggle.setAttribute('aria-expanded',String(open));if(open)render()}
  function button(text,fn){const el=document.createElement('button');el.className='phone-mission';el.textContent=text;el.onclick=fn;return el}
  function navigate(id){selected=id;onNavigate(id);show(false)}
  function render(){
