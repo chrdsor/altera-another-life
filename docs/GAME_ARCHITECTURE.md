@@ -2,13 +2,22 @@
 
 ## Current vertical slice
 
-`avatar-studio.html`, `world.html` and `city.html` use the same local avatar state (`altera-avatar-reference-v3`) and the same rigged GLB. A player can customize the avatar, enter Night Lounge, continue into District 01, move with keyboard or touch controls, and return to the studio without losing the selected body, hair, clothing or colors.
+`avatar-studio.html`, `world.html`, `city.html` and `home.html` use the same local avatar state (`altera-avatar-reference-v3`) and the same rigged GLB. A player can customize the avatar, enter Night Lounge, continue into District 01, unlock a first home, move with keyboard or touch controls, and return to the studio without losing the selected body, hair, clothing or colors.
 
-The shared state is normalized in `avatar-state.js` before rendering. Runtime materials, wardrobe choices, morphs and animation actions are shared through `avatar-appearance.js`, so avatar identity remains consistent between spaces. Night Lounge includes three discoverable interaction points. District 01 adds four persistent discoveries across a playable waterfront.
+The shared state is normalized in `avatar-state.js` before rendering. Runtime materials, wardrobe choices, morphs and animation actions are shared through `avatar-appearance.js`, so avatar identity remains consistent between spaces. Night Lounge includes three discoverable interaction points. District 01 adds four persistent discoveries across a playable waterfront, followed by a gated residential portal.
 
-District 01 prototype progression is normalized in `city-state.js` and linked to the versioned `world-domain.js` district identity. Completed actions derive reputation and visible world flags instead of trusting arbitrary stored totals. This local state is a prototype convenience only; future property, inventory, currency and social presence must remain server-authoritative.
+District 01 prototype progression is normalized in `city-state.js` and linked to the versioned `world-domain.js` district identity. Completed actions derive reputation and visible world flags instead of trusting arbitrary stored totals. The first-home layout is separately normalized in `home-state.js`, tied to `city_01` through `settlements.js`, capped at 24 objects and protected against unknown catalog entries or invalid transforms. These local states are prototype conveniences only; future property, inventory, currency and social presence must remain server-authoritative.
 
-Night Lounge and District 01 are actual Three.js scenes. The city vertical slice includes animated water, boats, tram traffic, articulated ambient pedestrians, optional rain, four distinct place scenes, collision, mobile controls and persistent progress. Facade windows use instancing to keep draw calls bounded as the street becomes denser. It does not use the supplied concept images as a background or substitute the avatar with a static render.
+Night Lounge, District 01 and First Home are actual Three.js scenes. The city vertical slice includes animated water, boats, tram traffic, articulated ambient pedestrians, optional rain, four distinct place scenes, collision, mobile controls and persistent progress. Facade windows use instancing to keep draw calls bounded as the street becomes denser. First Home adds an explorable apartment, walk/edit modes, placement preview, bounds and overlap checks, rigid-body furniture collision, moving, rotation, removal and persistent furnishing. Its three-step move-in objective is derived from the normalized furniture state, so arbitrary completion flags are not trusted. It does not use the supplied concept images as a background or substitute the avatar with a static render.
+
+## Prioritized development gaps
+
+1. Replace procedural hero furniture and architectural primitives with licensed, optimized production assets and authored lightmaps.
+2. Finish the avatar art pass: hero head, skin maps, separate eye stack, hair cards and garment weight-paint/clipping tests.
+3. Add an authoritative online service for identity, property, inventory, economy and social presence before any real ownership claims.
+4. Expand First Home with surface-aware placement, wall objects, color/material variants, undo and accessible object controls.
+5. Connect the completed move-in objective to the next playable chapter, residents and repeatable city activities.
+6. Add a real browser performance and visual regression matrix for representative iOS, Android and desktop GPUs.
 
 ## Selected open-source foundation
 
@@ -42,8 +51,10 @@ node --check avatar-studio.js
 node --check rigged-avatar.js
 node --check world.js
 node --check city.js
+node --check home.js
 node world-domain.test.mjs
 node city-state.test.mjs
+node home-state.test.mjs
 node scripts/check-app-contracts.cjs
 node scripts/check-avatar-state.mjs
 ```

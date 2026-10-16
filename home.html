@@ -1,3 +1,42 @@
-<!doctype html><html lang="nb"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ALTERA · Min bolig</title><style>
-:root{font-family:Inter,system-ui,sans-serif;color:#f7f4fa;background:#0a101a}*{box-sizing:border-box}body{margin:0}canvas{display:block;width:100vw;height:100vh}.hud{position:fixed;z-index:2;left:16px;top:16px;max-width:370px;background:#101a28e8;border:1px solid #56617866;border-radius:16px;padding:16px;backdrop-filter:blur(16px)}h1{font-size:19px;margin:0 0 8px}p{font-size:12px;color:#bbc7d4;margin:4px 0 12px}button,a{font:inherit;color:#fff;background:#27354a;border:1px solid #63718a;border-radius:9px;padding:9px 11px;cursor:pointer;text-decoration:none;display:inline-block;margin:3px}button.active{background:#754d9e}button:focus-visible,a:focus-visible{outline:3px solid #d8afff}.small{font-size:12px;color:#d5ddeb}#status{min-height:20px}.help{position:fixed;bottom:16px;left:16px;background:#101a28e8;padding:10px;border-radius:10px;font-size:12px;color:#d5ddeb}@media(max-width:700px){.hud{left:8px;top:8px;right:8px;max-width:none;padding:10px}.help{bottom:8px;left:8px;right:8px}}
-</style><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}</script></head><body><div class="hud"><h1>ALTERA · Min første bolig</h1><p>En spillbar prototype for møblering. Lagring skjer foreløpig kun i denne nettleseren.</p><div id="tools"><button data-kind="sofa">Sofa</button><button data-kind="table">Bord</button><button data-kind="chair">Stol</button><button data-kind="lamp">Lampe</button><button data-kind="shelf">Hylle</button><button data-kind="plant">Plante</button></div><div><button id="rotate">Roter valgt</button><button id="remove">Slett valgt</button><button id="reset">Nullstill</button><a href="city.html">Til byen</a></div><p id="status" role="status">Trykk på et møbel, og deretter på gulvet for å plassere det.</p></div><div class="help">Dra for å rotere kamera · Zoom med hjul eller klyp · Trykk på møbel for å velge</div><script type="module" src="home.js"></script></body></html>
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#111416">
+  <meta name="description" content="Innred ditt første hjem i ALTERA City.">
+  <title>ALTERA · Første hjem</title>
+  <link rel="stylesheet" href="home.css?v=2">
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/","rapier":"https://cdn.jsdelivr.net/npm/@dimforge/rapier3d-compat@0.21.0/rapier.es.js"}}</script>
+</head>
+<body>
+  <canvas id="home" aria-label="ALTERA Første hjem i 3D"></canvas>
+  <div class="loading" id="loading" role="status"><span></span><strong>Åpner ditt første hjem</strong><small id="loadingDetail">Klargjør interiøret</small></div>
+  <header class="hudTop">
+    <a class="homeBrand" href="index.html" aria-label="ALTERA hjem"><strong>ALTERA</strong><small>FØRSTE HJEM</small></a>
+    <div class="homeStatus"><i></i><span><b id="homeStateLabel">LOKAL PROTOTYPE</b><small>Home 01 · ALTERA City</small></span></div>
+    <div class="topActions"><a href="city.html">District 01</a><a href="avatar-studio.html">Studio</a><button id="photo" type="button">Foto</button><button id="settings" type="button" aria-expanded="false">Innstillinger</button></div>
+  </header>
+  <div class="roomLabel"><span>RESIDENCES 01</span><strong>Hjem 01</strong><small id="roomStatus">Stue · 42 m² prototype</small></div>
+  <section class="homeMission" aria-label="Innflyttingsoppgave"><span>INNFLYTTING</span><strong id="homeObjective">Plasser en sofa</strong><div aria-hidden="true"><i id="homeProgress"></i></div><small id="homeProgressLabel">0 / 3</small></section>
+  <aside class="catalogPanel" id="catalogPanel" aria-label="Møbelkatalog">
+    <header><span>MØBLER</span><b id="itemCount">0 / 24</b></header>
+    <div class="catalog" id="catalog">
+      <button type="button" data-furniture="sofa"><i class="sofa"></i><span>Sofa</span></button>
+      <button type="button" data-furniture="chair"><i class="chair"></i><span>Stol</span></button>
+      <button type="button" data-furniture="table"><i class="table"></i><span>Bord</span></button>
+      <button type="button" data-furniture="lamp"><i class="lamp"></i><span>Lampe</span></button>
+      <button type="button" data-furniture="plant"><i class="plant"></i><span>Plante</span></button>
+      <button type="button" data-furniture="shelf"><i class="shelf"></i><span>Hylle</span></button>
+    </div>
+  </aside>
+  <div class="selectionBar" id="selectionBar" hidden><strong id="selectedLabel">Møbel</strong><button id="moveItem" type="button">Flytt</button><button id="rotateItem" type="button">Roter</button><button id="deleteItem" type="button">Fjern</button></div>
+  <nav class="actionBar" aria-label="Bolighandlinger"><button id="walkMode" class="active" type="button"><span>Gå</span><small>Utforsk</small></button><button id="editMode" type="button"><span>Innred</span><small>Plasser</small></button><button id="cameraSide" type="button"><span>Kamera</span><small>Bytt side</small></button><button id="exitHome" type="button"><span>Byen</span><small>Gå ut</small></button></nav>
+  <section class="settingsPanel" id="settingsPanel" hidden aria-label="Boliginnstillinger"><div><h2>Innstillinger</h2><button id="closeSettings" type="button" aria-label="Lukk">×</button></div><label>Grafikk<select id="quality"><option value="auto">Automatisk</option><option value="high">Høy</option><option value="mobile">Mobil</option></select></label><label><input id="reduceMotion" type="checkbox"> Reduser kamerabevegelse</label><p>Møblene lagres lokalt i prototypen.</p></section>
+  <div class="lockedNotice" id="lockedNotice" hidden><strong>Boligen er ikke låst opp ennå</strong><span>Fullfør Ankomst-kapittelet i District 01.</span><a href="city.html">Tilbake til byen</a></div>
+  <div class="joystick" id="joystick" aria-label="Beveg avataren"><span></span></div>
+  <button class="placeButton" id="placeButton" type="button" hidden>Plasser</button>
+  <div id="toast" hidden role="status"></div>
+  <script type="module" src="home.js?v=2"></script>
+</body>
+</html>

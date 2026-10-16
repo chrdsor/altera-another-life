@@ -1,0 +1,16 @@
+import {FURNITURE_CATALOG,HOME_LIMIT,HOME_STATE_KEY,LEGACY_HOME_STATE_KEY,addFurniture,deriveHomeProgress,loadHomeState,normalizeHomeState,removeFurniture,saveHomeState,updateFurniture} from './home-state.js';
+const assert=(ok,message)=>{if(!ok)throw new Error(message)};
+const hostile=normalizeHomeState({items:[{id:'bad',type:'sofa',x:999,z:-999},{id:'item_001',type:'unknown'},{id:'item_002',type:'chair',x:99,z:-99,rotation:.9,color:'red'}]});
+assert(hostile.items.length===1&&hostile.items[0].x===4.35&&hostile.items[0].z===-3.85,'sanitize items');
+let state=normalizeHomeState(),created=addFurniture(state,'sofa',{x:1,z:2});state=created.state;assert(created.item.id==='item_001'&&state.items.length===1,'add item');
+state=updateFurniture(state,'item_001',{x:3,rotation:Math.PI/2});assert(state.items[0].x===3&&state.items[0].rotation===Math.PI/2,'update item');
+state=removeFurniture(state,'item_001');assert(state.items.length===0,'remove item');
+let progress=deriveHomeProgress(state);assert(progress.completed.length===0&&progress.next?.id==='anchor_room'&&!progress.complete,'first task');
+for(const type of ['sofa','table','lamp'])state=addFurniture(state,type).state;progress=deriveHomeProgress(state);assert(progress.completed.length===3&&progress.complete&&!progress.next,'furnishing progression');
+state=removeFurniture(state,'item_002');assert(!deriveHomeProgress(state).complete,'progress is derived from current furniture');
+state=normalizeHomeState();
+for(let i=0;i<HOME_LIMIT+3;i++)state=addFurniture(state,'lamp',{x:i%4,z:0}).state;assert(state.items.length===HOME_LIMIT,'limit items');
+const values=new Map(),storage={getItem:key=>values.get(key)||null,setItem:(key,value)=>values.set(key,value)};saveHomeState(state,storage);assert(values.has(HOME_STATE_KEY)&&loadHomeState(storage).items.length===HOME_LIMIT,'save/load');
+const legacyValues=new Map([[LEGACY_HOME_STATE_KEY,JSON.stringify([{id:'random-id',kind:'sofa',x:1.5,z:-2,turn:1,mesh:{scene:'must not persist'}}])]]),legacyStorage={getItem:key=>legacyValues.get(key)||null};const migrated=loadHomeState(legacyStorage);assert(migrated.items[0].id==='item_001'&&migrated.items[0].type==='sofa'&&migrated.items[0].rotation===Math.PI/2,'migrate legacy furniture without scene objects');
+assert(Object.keys(FURNITURE_CATALOG).length===6,'catalog');
+console.log('First Home state checks passed');
