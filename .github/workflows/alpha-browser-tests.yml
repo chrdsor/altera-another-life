@@ -20,7 +20,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Test full quest in Chromium
-        run: npx playwright test tests/alpha-browser.spec.mjs --project=chromium --workers=1
+        run: npx playwright test tests/alpha-browser.spec.mjs --workers=1
       - name: Upload failure evidence
         if: failure()
         uses: actions/upload-artifact@v4
