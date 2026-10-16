@@ -40,6 +40,8 @@ export function buildHarborScene(T,scene){
    }
   }
  }
+ // Roof gables and balcony details facing the promenade.
+ for(let i=0;i<7;i++){const z=6-i*12.7;box(.18,.11,7.6,6.5,4.95,z,0x665047);for(const zz of [z-2.4,z+2.4]){box(.3,.13,.65,6.28,3.0,zz,0x5b4d48);box(.09,.75,.09,6.16,3.38,zz,0x3c4042)}}
  // Café Varm: storefront centered near the actual café interaction location.
  box(.17,2.65,6.4,6.58,1.35,-24,0x4b302a);
  for(const z of [-26.3,-24,-21.7]){
@@ -62,6 +64,8 @@ export function buildHarborScene(T,scene){
   box(.4,.36,.4,-4.7,3.4,z,0xf5c98a);
   const glow=new T.PointLight(0xffc47b,.65,7,2);glow.position.set(-4.7,3.1,z);scene.add(glow);
  }
+ // Benches, flowers and small details make the harbor more legible.
+ for(const z of [-7,-18,-34,-47]){box(.85,.12,1.45,-4.4,.52,z,0x9c7756);box(.12,.9,.12,-4.75,.35,z-.52,0x393735);box(.12,.9,.12,-4.75,.35,z+.52,0x393735);box(.12,.6,1.45,-4.85,.88,z,0x9c7756)}
  // Quay sign and recognizable boat silhouettes beyond the rail.
  for(const z of [-13,-37]){
   box(2.7,.12,1.2,-10.8,-.04,z,0x92775b);
