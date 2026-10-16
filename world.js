@@ -25,7 +25,7 @@ boot().catch(error=>{$('loadingDetail').textContent='Kunne ikke starte verden: '
 async function boot(){
   setupPageLinks();$('loadingDetail').textContent='Starter Rapier-fysikk';await RAPIER.init();
   setupRenderer();physics=new RAPIER.World({x:0,y:-9.81,z:0});buildWorld();setupPlayerPhysics();setupInput();applyWorldSettings();updateObjective();
-  $('loadingDetail').textContent='Laster den lagrede avataren din';await loadAvatar();await setupSocial();$('loading').hidden=true;requestAnimationFrame(frame);
+  $('loadingDetail').textContent='Laster den lagrede avataren din';await loadAvatar().catch(error=>{console.warn('ALTERA: avatar fallback',error);createFallbackAvatar();});await setupSocial();$('loading').hidden=true;requestAnimationFrame(frame);
 }
 
 function setupRenderer(){
@@ -54,6 +54,19 @@ function buildHotspots(){for(const spot of interactiveSpots){const marker=new T.
 function setupPlayerPhysics(){body=physics.createRigidBody(RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(0,.84,3.8));collider=physics.createCollider(RAPIER.ColliderDesc.capsule(.54,.28),body);controller=physics.createCharacterController(.025);controller.enableAutostep(.24,.18,true);controller.enableSnapToGround(.18);controller.setMaxSlopeClimbAngle(Math.PI*.25)}
 
 async function loadAvatar(){const gltf=await new GLTFLoader().loadAsync('assets/characters/mpfb-builder-v1/avatar.glb?v=3'),model=gltf.scene,bounds=new T.Box3().setFromObject(model),size=bounds.getSize(new T.Vector3()),center=bounds.getCenter(new T.Vector3()),scale=1.72/size.y;if(!Number.isFinite(scale)||scale<=0)throw Error('Avatarfilen har ugyldig størrelse');player=new T.Group();avatarModel=model;model.scale.setScalar(scale);model.position.set(-center.x*scale,-bounds.min.y*scale,-center.z*scale);player.add(model);scene.add(player);applyAvatarAppearance(T,model,avatarState,renderer);const animation=createAvatarActions(T,model,gltf.animations||[]);mixer=animation.mixer;player.userData.actions=animation.actions;setAnimation('idle');avatarReady=true}
+function createFallbackAvatar(){
+  player=new T.Group();
+  const skin=new T.MeshStandardMaterial({color:avatarState.skin||'#d79b76',roughness:.85});
+  const clothing=new T.MeshStandardMaterial({color:avatarState.topColor||'#345078',roughness:.85});
+  const trousers=new T.MeshStandardMaterial({color:avatarState.bottomColor||'#28262d',roughness:.9});
+  const head=new T.Mesh(new T.SphereGeometry(.21,16,12),skin);head.position.y=1.52;player.add(head);
+  const torso=new T.Mesh(new T.CapsuleGeometry(.27,.55,6,12),clothing);torso.position.y=.96;player.add(torso);
+  for(const x of [-.14,.14]){const leg=new T.Mesh(new T.CapsuleGeometry(.095,.45,4,8),trousers);leg.position.set(x,.32,0);player.add(leg)}
+  for(const x of [-.37,.37]){const arm=new T.Mesh(new T.CapsuleGeometry(.075,.48,4,8),clothing);arm.position.set(x,1.03,0);player.add(arm)}
+  avatarModel=null;mixer=null;activeAction=null;player.userData.actions={};scene.add(player);
+  avatarReady=true;
+  note('Enkel reserveavatar brukes. Den detaljerte avataren kunne ikke lastes.');
+}
 function setAnimation(name){const next=player?.userData.actions?.[name];if(!next||next===activeAction)return;activeAction?.fadeOut(.18);next.reset().fadeIn(.18).play();activeAction=next}
 
 function setupInput(){addEventListener('keydown',e=>{keys.add(e.code);if(e.code==='KeyE'&&!e.repeat)interact()});addEventListener('keyup',e=>keys.delete(e.code));addEventListener('blur',resetInput);document.addEventListener('visibilitychange',()=>{resetInput();last=performance.now()});addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight,false)});let lastX=0;$('world').addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;$('world').setPointerCapture?.(e.pointerId)});addEventListener('pointerup',()=>dragging=false);addEventListener('pointercancel',()=>dragging=false);addEventListener('pointermove',e=>{if(dragging){cameraYaw-=Math.max(-35,Math.min(35,e.clientX-lastX))*.006;lastX=e.clientX}});const joy=$('joystick'),knob=joy.querySelector('span');let joyId=null;const joyMove=e=>{const r=joy.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2),len=Math.hypot(x,y),max=r.width*.34,s=Math.min(1,max/(len||1)),cx=x*s,cy=y*s;stick.x=cx/max;stick.y=cy/max;knob.style.transform=`translate(${cx}px,${cy}px)`};joy.addEventListener('pointerdown',e=>{joyId=e.pointerId;joy.setPointerCapture(joyId);joyMove(e)});joy.addEventListener('pointermove',e=>{if(e.pointerId===joyId)joyMove(e)});const joyEnd=e=>{if(e.pointerId!==joyId)return;joyId=null;stick.x=stick.y=0;knob.style.transform=''};joy.addEventListener('pointerup',joyEnd);joy.addEventListener('pointercancel',joyEnd);$('mobileAction').onclick=interact;$('settings').onclick=toggleSettings;$('closeSettings').onclick=toggleSettings;$('exit').onclick=()=>location.href=gameUrl('avatar-studio.html');$('cityLink').onclick=()=>location.href=gameUrl('city.html');$('socialToggle').onclick=()=>$('socialPanel').classList.toggle('open');$('cameraSide').onclick=()=>cameraSide*=-1;$('walkToggle').onclick=()=>{run=!run;note(run?'Rask gange':'Rolig gange')};$('wave').onclick=()=>note('Hei! En egen emote-animasjon legges til i neste karakterasset.');$('photo').onclick=capture;$('quality').onchange=e=>setQuality(e.target.value);$('reduceMotion').onchange=e=>{worldSettings.reduceMotion=e.target.checked;persistWorldSettings()};$('chatForm').onsubmit=sendSocialChat}
