@@ -17,4 +17,4 @@ jobs:
       - name: Check quest logic
         run: node --test tests/alpha-quest.test.mjs tests/alpha-home-demo.test.mjs tests/alpha-movement.test.mjs tests/alpha-wayfinding.test.mjs
       - name: Check alpha script syntax
-        run: node --check alpha.js && node --check alpha-interior.js && node --check alpha-movement.mjs && node --check alpha-map-ui.mjs && node --check alpha-wayfinding.mjs
+        run: node --check alpha.js && node --check alpha-interior.js && node --check alpha-movement.mjs && node --check alpha-map-ui.mjs && node --check alpha-wayfinding.mjs && node --check alpha-harbor-art.mjs
