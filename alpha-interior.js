@@ -4,6 +4,7 @@ import {readPostcardPlacement,placePostcard} from './alpha-home-demo.mjs';
 const $=id=>document.getElementById(id),room=new URLSearchParams(location.search).get('room')==='home'?'home':'cafe',questKey='altera-alpha-demo-quest-v1',homeKey='altera-alpha-demo-home-v1';
 let quest;try{quest=normalizeQuest(JSON.parse(localStorage.getItem(questKey)||'null'))}catch{quest=normalizeQuest(null)}
 const unlocked=()=>quest.reward===QUEST_REWARD;
+const fallbackPage=room==='cafe'?'alpha-cafe.html':'alpha-home.html';
 let placed=readPostcardPlacement(localStorage.getItem(homeKey),unlocked());
 $('title').textContent=room==='cafe'?'ALTERA · Kafé Varm':'ALTERA · Din første leilighet';
 let scene,camera,renderer,avatar,yaw=0,near=null,last=performance.now(),drag=false,dragX=0;const keys=new Set(),solids=[],targets=[];
@@ -51,4 +52,4 @@ addEventListener('keyup',e=>keys.delete(e.code));addEventListener('blur',()=>key
 for(const b of document.querySelectorAll('[data-key]')){const k=b.dataset.key;b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);keys.add(k)});for(const t of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(t,()=>keys.delete(k))}
 addEventListener('pointerdown',e=>{if(e.target.tagName==='CANVAS'){drag=true;dragX=e.clientX}});addEventListener('pointermove',e=>{if(drag){yaw+=(e.clientX-dragX)*.005;dragX=e.clientX}});addEventListener('pointerup',()=>drag=false);addEventListener('pointercancel',()=>drag=false);
 addEventListener('resize',()=>{if(!camera)return;camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
-try{build();requestAnimationFrame(tick)}catch(e){$('error').style.display='grid';$('error-text').textContent=e.message;console.error(e)}
+try{build();window.__alteraInteriorReady=true;requestAnimationFrame(tick)}catch(e){$('error').style.display='grid';$('error-text').textContent='3D-scenen kunne ikke starte: '+(e.message||String(e));$('fallback').href=fallbackPage;console.error(e)}
