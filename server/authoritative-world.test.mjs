@@ -1,0 +1,23 @@
+import {AuthoritativeWorld,DomainError} from './authoritative-world.mjs';
+
+const assert=(condition,message)=>{if(!condition)throw new Error(message)};
+const command=(commandId,actorId,type,payload)=>({version:1,commandId,actorId,type,payload});
+const expectCode=(fn,code)=>{try{fn()}catch(error){assert(error instanceof DomainError&&error.code===code,`expected ${code}, got ${error.code}`);return}throw new Error(`expected ${code}`)};
+const world=new AuthoritativeWorld();
+world.registerPlayer({id:'player_001',displayName:'Ava'});world.registerPlayer({id:'player_002',displayName:'Kai'});
+assert(world.playerSnapshot('player_001').player.balanceMinor===2500,'starter balance');
+let result=world.execute(command('cmd_join_001','player_001','join_room',{roomId:'night_lounge'}));assert(result.data.members.length===1,'join room');
+world.execute(command('cmd_join_002','player_002','join_room',{roomId:'night_lounge'}));
+result=world.execute(command('cmd_presence_001','player_001','update_presence',{roomId:'night_lounge',x:1.13,z:-2.12,yaw:.4567,now:900}));assert(result.data.x===1.25&&result.data.z===-2&&result.data.yaw===.457,'presence normalized');
+result=world.execute(command('cmd_chat_001','player_001','send_chat',{roomId:'night_lounge',text:' Hei   Kai! ',now:1000}));assert(result.data.text==='Hei Kai!','normalized chat');
+expectCode(()=>world.execute(command('cmd_chat_002','player_001','send_chat',{roomId:'night_lounge',text:'for rask',now:1100})),'rate_limited');
+expectCode(()=>world.execute(command('cmd_place_bad','player_002','place_furniture',{homeId:'home_player_001',instanceId:'item_001',itemType:'sofa',x:0,z:0})),'forbidden');
+world.execute(command('cmd_access_001','player_001','set_access',{homeId:'home_player_001',visitorId:'player_002',allowed:true,canEdit:true}));
+result=world.execute(command('cmd_place_001','player_002','place_furniture',{homeId:'home_player_001',instanceId:'item_001',itemType:'sofa',x:.13,z:-.13,rotation:1.4}));assert(result.data.item.x===.25&&result.data.item.rotation===Math.PI/2,'validated placement');
+const repeat=world.execute(command('cmd_place_001','player_002','place_furniture',{homeId:'home_player_001',instanceId:'item_001',itemType:'sofa',x:4,z:3}));assert(repeat.data.item.x===.25&&world.homes.get('home_player_001').items.length===1,'idempotency');
+world.execute(command('cmd_listing_001','player_001','create_listing',{listingId:'listing_001',itemType:'table',priceMinor:700}));
+result=world.execute(command('cmd_purchase_001','player_002','purchase_listing',{listingId:'listing_001'}));assert(result.data.buyerBalanceMinor===1800,'buyer debited');assert(world.players.get('player_001').balanceMinor===3200,'seller credited');assert(world.ledger.length===1&&world.listings.get('listing_001').status==='sold','atomic sale recorded');
+expectCode(()=>world.execute(command('cmd_purchase_002','player_002','purchase_listing',{listingId:'listing_001'})),'listing_unavailable');
+const room=world.playerSnapshot('player_001').rooms[0];assert(room.members.find(member=>member.id==='player_001').displayName==='Ava'&&room.messages.length===1,'public room snapshot');
+world.execute(command('cmd_leave_001','player_002','leave_room',{roomId:'night_lounge'}));assert(world.playerSnapshot('player_001').rooms[0].members.length===1,'leave room');
+console.log('Authoritative world checks passed');

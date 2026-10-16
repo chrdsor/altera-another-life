@@ -1,27 +1,37 @@
-# ALTERA – Closing the under-50% gaps
+# ALTERA - Closing the under-50% gaps
 
-The aim is to raise **prototype coverage**, not claim production completeness. Percentages are subjective estimates, not verified measurements.
+The target is demonstrable prototype coverage, not a claim of production completeness. Percentages are working estimates and must be backed by positive and negative tests plus connection to a player loop.
 
-## Implemented this iteration
-- `simulation-kernel.js`: pure in-memory simulation for players, accounts, parcels, access, building, inventory, marketplace, transfers, command idempotency, event history and snapshots.
-- `simulation-kernel.test.mjs`: deterministic tests covering unauthorized access, duplicate command replay, building requirements, market trade, insufficient funds and atomic rollback.
-- Command operations use structured cloning before applying state changes; this is a **single-process prototype**, not durable DB transactions.
-- Real money, login, public network endpoints and trusted server authority are **not** implemented.
+## Current milestone
 
-## Next implementation gates
-| Priority | System | Prototype gate | Production gate |
-|---|---|---|---|
-| P0 | Identity & multiplayer | Two local simulated clients + protocol tests | Auth, secure sessions, rate limits, server-side positions |
-| P0 | Persistence | Versioned SQLite/Postgres schema + restart tests | Backup/restore, migration and transaction isolation |
-| P0 | Economy | In-memory atomic transfer/listing tests | Double-entry DB ledger, audit trail, fraud limits |
-| P1 | Property | Parcel ownership/access/build validation | Server permissions, construction geometry validation |
-| P1 | Social | Chat/invite protocol with blocking tests | Moderation, privacy, report workflows |
-| P1 | Construction | Modular placement + parcel bounds tests | Shared world editor, undo/audit, streaming |
-| P2 | NPC/society | Jobs, business and governance data contracts | Economy balancing, simulation scheduling, abuse resistance |
-| P2 | Art | One hero character and hero street benchmark | LOD, optimization, consistent production assets |
+- `simulation-kernel.js` covers deterministic parcels, construction, access, inventory, marketplace, transfers, idempotency, rollback and audit events.
+- `server/authoritative-world.mjs` covers development identity, starter homes, permissions, room membership, normalized presence, rate-limited chat, furniture commands, listings and integer-money transfers.
+- `server/http-server.mjs` binds every command to the authenticated development session and rejects actor spoofing.
+- `server/sqlite-store.mjs` provides versioned SQLite persistence; restart tests prove that players, rooms, presence and idempotency records survive a process restart.
+- `social-client.js` connects two tested clients to the same room. Night Lounge activates the online room list, synchronized chat and presence when an authority URL is configured.
 
-## Security model
-No client-supplied balance, parcel ownership, item grant or NPC wage may be trusted. Seed helpers such as `giveItem` and `addPlayer` are **developer-only** and must never be exposed as unauthenticated endpoints. A production ledger requires immutable double-entry postings and transactional persistence.
+## Honest coverage after this milestone
 
-## Definition of 50% prototype coverage
-A feature is halfway to a functional prototype only if it is demonstrable, has positive and negative tests, and is connected to an actual player loop. A data contract alone does not qualify.
+| System | Prototype coverage | What blocks 50% |
+|---|---:|---|
+| Identity and multiplayer | 35% | External authentication, WebSocket movement and hosted service |
+| Persistence | 40% | Normalized schema, concurrency, backups and migration operations |
+| Economy | 35% | One canonical ledger implementation, durable double-entry postings and fraud controls |
+| Property and home | 45% | Server-connected public client, visits and inventory-backed furnishing |
+| Social | 40% | Remote avatar rendering, friends/invites, blocking and moderation workflow |
+| Construction | 25% | Client editor, modular kit, geometry validation and persisted shared placement |
+| NPC and society | 10% | Jobs, businesses, schedules, organizations and governance loop |
+| Character art | 25% | Finished licensed Hero 001 GLB, facial rig, hair cards, garments and LOD |
+| World art | 25% | Hero street assets, authored materials/lightmaps and device benchmarks |
+
+## Next gates
+
+1. Consolidate economy/property around one durable domain and normalized ledger tables.
+2. Add hosted authentication and WebSocket transport, then render remote avatars in Night Lounge.
+3. Connect server-owned inventory and home state to the public furnishing client.
+4. Build the first modular parcel editor against authoritative bounds and permissions.
+5. Produce or license Hero 001 and one hero street kit; code alone cannot close the art gap.
+
+## Security boundary
+
+No client-supplied balance, ownership, inventory grant or NPC wage is trusted. Developer session creation and seed helpers are not production authentication. Public launch requires TLS, external identity, edge rate limiting, moderation storage, transactional audit history and a security review.

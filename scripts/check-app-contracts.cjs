@@ -15,6 +15,9 @@ const cityStateJs=read('city-state.js');
 const homeHtml=read('home.html');
 const homeJs=read('home.js');
 const homeStateJs=read('home-state.js');
+const socialClientJs=read('social-client.js');
+const authorityJs=read('server/authoritative-world.mjs');
+const httpServerJs=read('server/http-server.mjs');
 
 function ids(html){return new Set([...html.matchAll(/\bid=["']([^"']+)["']/g)].map(match=>match[1]))}
 function referencedIds(js){return new Set([...js.matchAll(/\$\('([^']+)'\)|getElementById\('([^']+)'\)/g)].map(match=>match[1]||match[2]))}
@@ -53,6 +56,11 @@ assert(worldJs.includes("altera-world-settings-v1"),'Grafikk- og kameravalg må 
 assert(worldJs.includes("altera-world-progress-v1"),'Oppdagelsesprogresjon må kunne lagres');
 for(const spot of ["id:'portal'","id:'dj'","id:'window'"])assert(worldJs.includes(spot),'Mangler interaksjonspunkt: '+spot);
 assert(worldHtml.includes('id="objectiveProgress"'),'Spillet mangler synlig progresjon');
+assert(worldHtml.includes('id="chatForm"')&&worldHtml.includes('id="onlineCount"'),'Loungen mangler sosialt romgrensesnitt');
+assert(worldJs.includes("from './social-client.js?v=1'")&&worldJs.includes('syncSocial'),'Loungen mangler valgfri autoritativ sosialkobling');
+assert(socialClientJs.includes("update_presence")&&socialClientJs.includes("send_chat"),'Sosialklienten mangler nærvær eller chat');
+for(const feature of ['purchaseListing','placeFurniture','setAccess','sendChat'])assert(authorityJs.includes(feature),'Autoritetsserveren mangler domenehandling: '+feature);
+assert(httpServerJs.includes("'/v1/commands'")&&httpServerJs.includes('actor_mismatch'),'HTTP-laget må beskytte aktøridentitet');
 assert(cityStateJs.includes("altera-district-01-state-v2")&&cityJs.includes('saveCityState'),'Byens progresjon må bruke validert District 01-state');
 assert(cityJs.includes("from './city-state.js?v=1'"),'Byen må bruke den testbare distriktsmodulen');
 assert(cityStateJs.includes("from './world-domain.js'"),'Distriktsstate må være koblet til verdensdomenet');

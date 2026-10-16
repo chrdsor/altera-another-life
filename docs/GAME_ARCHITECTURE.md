@@ -28,7 +28,9 @@ Night Lounge, District 01 and First Home are actual Three.js scenes. The city ve
 
 ## Runtime boundaries
 
-The browser owns presentation, input prediction, camera and interpolation. A future Colyseus server must own room membership, validated movement intents, interaction state and chat. Clients should send input intent rather than authoritative positions.
+The browser owns presentation, input prediction, camera and interpolation. The development authority in `server/` now owns validated room membership, rate-limited chat, presence, starter homes, furniture commands, access control, inventory, listings and atomic integer-money transfers. `social-client.js` can connect Night Lounge to that authority through `?authority=<server-url>` while the public static demo remains an honest solo preview.
+
+The dependency-free Node development service persists validated world snapshots through the built-in SQLite module and has a restart/idempotency test. It proves contracts, end-to-end HTTP behavior and development persistence, but is not production infrastructure: it still needs a normalized transactional schema, real authentication, WebSocket transport, moderation storage, deployment, backups and operational security before public multiplayer.
 
 ## Character contract
 
@@ -55,6 +57,10 @@ node --check home.js
 node world-domain.test.mjs
 node city-state.test.mjs
 node home-state.test.mjs
+node server/authoritative-world.test.mjs
+node server/http-server.test.mjs
+node server/sqlite-store.test.mjs
+node social-client.test.mjs
 node scripts/check-app-contracts.cjs
 node scripts/check-avatar-state.mjs
 ```
