@@ -16,7 +16,7 @@ test('animation selection prefers named idle and walking clips',()=>{
  assert.equal(chooseHeroClip(clips,'idle'),clips[0]);
 });
 test('missing configured model keeps procedural avatar without loading',async()=>{
- const result=await attachHeroRig(null,null);
+ const result=await attachHeroRig(null,null,{url:'./not-allowed.glb'});
  assert.equal(result,null);
 });
 
