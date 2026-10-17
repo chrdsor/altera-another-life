@@ -17,3 +17,6 @@ Existing District 01 has a playable quest, map, phone and local persistence; soc
 5. Add real server-connected two-player presence only after authentication and moderation checks.
 ## Integration boundary
 Use existing server/authoritative-world.mjs and server/http-server.mjs for identity, housing and money. Never store authoritative balances or ownership in localStorage. Do not fork parallel economy implementations.
+
+## Character art pass v2 (procedural fallback)
+District 01 characters now share a more legible human-shaped silhouette, pivoted limb joints, facial details, footwear, layered collars, hair variants and subtle idle breathing. Maja uses a consistent apron and long-hair variant outdoors and in the café. This remains geometry-based prototype art, not a licensed rigged GLB or production-quality facial animation. The next asset milestone remains a properly rigged Hero 001 GLB with documented provenance, LOD and animation clips.
