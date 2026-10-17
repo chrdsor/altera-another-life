@@ -6,6 +6,7 @@ import {AVATAR_OPTIONS,AVATAR_STATE_KEY,DEFAULT_AVATAR_STATE,loadAvatarState,nor
 
 const $=id=>document.getElementById(id);
 const storageKey=AVATAR_STATE_KEY;
+try{const destination=sessionStorage.getItem('altera-avatar-return');if(destination==='alpha.html'){$('saveNote').textContent='Utseendet brukes i District 01';const enter=document.querySelector('.enterWorld');if(enter){enter.href='alpha.html';enter.textContent='Tilbake til District 01'}}}catch{}
 const mobile=matchMedia('(max-width:760px)').matches;
 const reducedMotion=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const lowPower=mobile || (navigator.deviceMemory && navigator.deviceMemory<=4);
