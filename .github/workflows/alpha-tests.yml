@@ -15,6 +15,6 @@ jobs:
         with:
           node-version: '22'
       - name: Check quest logic
-        run: node --test tests/alpha-quest.test.mjs tests/alpha-home-demo.test.mjs tests/alpha-movement.test.mjs tests/alpha-gamefeel.test.mjs tests/alpha-avatar-bridge.test.mjs tests/alpha-hero-rig.test.mjs tests/alpha-wayfinding.test.mjs
+        run: node --test tests/alpha-quest.test.mjs tests/alpha-home-demo.test.mjs tests/alpha-movement.test.mjs tests/alpha-gamefeel.test.mjs tests/alpha-avatar-bridge.test.mjs tests/alpha-hero-rig.test.mjs tests/alpha-hero-rig.test.mjs tests/alpha-wayfinding.test.mjs
       - name: Check alpha script syntax
-        run: node --check alpha.js && node --check alpha-interior.js && node --check alpha-movement.mjs && node --check alpha-gamefeel.mjs && node --check alpha-avatar-bridge.mjs && node --check alpha-hero-rig.mjs && node --check alpha-rig-validation.mjs && node --check alpha-phone.mjs && node --check alpha-map-ui.mjs && node --check alpha-wayfinding.mjs && node --check alpha-harbor-art.mjs && node --check alpha-character-art.mjs && node --check alpha-district-visuals.mjs
+        run: node --check alpha.js && node --check alpha-interior.js && node --check alpha-movement.mjs && node --check alpha-gamefeel.mjs && node --check alpha-avatar-bridge.mjs && node --check alpha-hero-rig.mjs && node --check alpha-rig-validation.mjs && node --check alpha-hero-rig.mjs && node --check alpha-rig-validation.mjs && node --check alpha-phone.mjs && node --check alpha-map-ui.mjs && node --check alpha-wayfinding.mjs && node --check alpha-harbor-art.mjs && node --check alpha-character-art.mjs && node --check alpha-district-visuals.mjs
