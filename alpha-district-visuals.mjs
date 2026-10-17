@@ -7,7 +7,9 @@ export function buildDistrictVisuals(T,scene){
  block(13,.035,88,-.3,.04,-29,0x988675);
  block(1.25,.07,88,-5.8,.055,-29,0x6c716c);
  block(1.15,.06,88,5.8,.055,-29,0xb6a38d);
- block(14,.025,90,-17,-.02,-29,0x356a78);
+ const sea=new T.Mesh(new T.PlaneGeometry(15,90,18,45),new T.MeshStandardMaterial({color:0x286b80,roughness:.35,metalness:.12,transparent:true,opacity:.94,side:T.DoubleSide}));sea.rotation.x=-Math.PI/2;sea.position.set(-17,.025,-29);scene.add(sea);
+ const waterPositions=sea.geometry.attributes.position,baseWater=new Float32Array(waterPositions.array);
+ scene.userData.updateDistrictWater=(time)=>{for(let i=0;i<waterPositions.count;i++){const x=baseWater[i*3],y=baseWater[i*3+1];waterPositions.setZ(i,Math.sin(x*.8+time*.7)*.055+Math.cos(y*.5+time*.55)*.035)}waterPositions.needsUpdate=true;sea.geometry.computeVertexNormals()};
  for(let z=8;z>-68;z-=1.9){
   block(11.7,.012,.045,-.3,.066,z,0x786b5f);
   for(let x=-5.4;x<5.6;x+=1.1)block(.04,.012,1.8,x+((Math.round(z)%2)*.55),.067,z-.95,0x786b5f);
