@@ -1,7 +1,7 @@
 // Shared, opt-in rigged Hero 001 runtime for District 01 and interiors.
 // No model is bundled yet: the procedural avatar remains visible until a validated GLB loads.
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {inspectHumanoid} from './rigged-avatar.js';
+import {inspectHumanoid} from './alpha-rig-validation.mjs';
 export const HERO_ASSET_URL='./assets/characters/hero-001.glb';
 export function chooseHeroClip(clips,kind){
  const patterns=kind==='walk'?[/walk/i,/locomotion/i,/run/i]:[/idle/i,/breath/i,/stand/i];
