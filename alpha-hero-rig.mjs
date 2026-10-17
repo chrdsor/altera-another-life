@@ -1,6 +1,8 @@
 // Shared, opt-in rigged Hero 001 runtime for District 01 and interiors.
 // No model is bundled yet: the procedural avatar remains visible until a validated GLB loads.
 import {inspectHumanoid} from './alpha-rig-validation.mjs';
+import {playerAppearance} from './alpha-avatar-bridge.mjs';
+import {applyHeroAppearance} from './alpha-hero-appearance.mjs';
 export const HERO_ASSET_URL='./assets/characters/hero-001.glb';
 export function chooseHeroClip(clips,kind){
  const patterns=kind==='walk'?[/walk/i,/locomotion/i,/run/i]:[/idle/i,/breath/i,/stand/i];
@@ -20,6 +22,8 @@ export async function attachHeroRig(T,character,{url=null,loader=null,onStatus=(
  const report=inspectHumanoid(gltf.scene,gltf.animations||[]);
  if(!heroAssetCompatible(report)){onStatus('Hero 001 rig incomplete: '+report.missingRequired.join(', '));return null}
  const root=gltf.scene;
+ // Only named material slots are recolored; unknown artwork remains untouched.
+ try{applyHeroAppearance(root,playerAppearance(globalThis.localStorage))}catch(error){onStatus('Hero appearance unavailable: keeping original materials')}
  // Normalize the artist-authored model to the current gameplay height (approx. 2.15m).
  const box=new T.Box3().setFromObject(root),size=new T.Vector3();box.getSize(size);
  if(!(size.y>0.2&&size.y<100)){onStatus('Hero 001 has invalid bounds');return null}
