@@ -13,7 +13,7 @@ Publish the companion `assets/characters/hero-001.json` manifest:
 The manifest is optional and must only reference a local GLB in `assets/characters/`. Without it, no model is fetched. Invalid models retain the procedural fallback.
 
 ## Avatar Studio palette contract
-Name the six recolorable glTF materials exactly `Skin`, `Hair`, `Top`, `Bottom`, `Shoes` and `Eyes` (optional `_Material` suffix). The runtime clones only these named materials and applies the locally saved Studio colors. Unknown materials are left unchanged. This supports basic color customization only: it does **not** change mesh geometry, hairstyles, clothing shapes or server-owned identities. Rigged GLB remains opt-in until a licensed asset is committed.
+Name the six recolorable glTF materials exactly `Skin`, `Hair`, `Top`, `Bottom`, `Shoes` and `Eyes` (optional `_Material` suffix). The runtime clones only these named materials and applies the locally saved Studio colors. An optional morph target named `BodyWidth` receives the Studio body-width slider, mapped from 0.82–1.2 to a 0–1 weight. Unknown materials are left unchanged. This supports basic color customization and an optional authored body-width morph; it does **not** switch hairstyles, clothing meshes or server-owned identities. Rigged GLB remains opt-in until a licensed asset is committed.
 
 ## Verification before release
 1. Validate mesh skinning, bone naming and animation clips in Avatar Studio diagnostics.
