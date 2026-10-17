@@ -56,6 +56,7 @@ function tick(now){const dt=Math.min((now-last)/1000,.05);last=now;const x=Numbe
  near=nearestTarget(targets,p);$('action').disabled=!near;$('action').textContent=near?.label||'Samhandle';$('hint').textContent=near?near.label:'Utforsk rommet og finn interaksjonspunktene';$('objective').textContent=room==='cafe'?questObjective(quest):(unlocked()?(placed?'Postkort plassert ✓':'Heng opp havnepostkortet'):'Fullfør velkomstoppdraget hos Maja');
  renderer.render(scene,camera);requestAnimationFrame(tick)}
 $('action').onclick=interact;
+if(location.hostname==='127.0.0.1')window.__alteraTestAppearance=()=>playerAppearance(localStorage);
 if(location.hostname==='127.0.0.1')window.__alteraTestSetPosition=(x,z)=>{avatar.position.set(x,0,z);near=nearestTarget(targets,avatar.position);$('action').disabled=!near};
 addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();keys.add(e.code);if(e.code==='KeyE'&&!e.repeat)interact()});
 addEventListener('keyup',e=>keys.delete(e.code));addEventListener('blur',()=>keys.clear());
