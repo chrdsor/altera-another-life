@@ -28,6 +28,21 @@ export function buildDistrictVisuals(T,scene){
    block(.15,.09,1.5,6.42,yy-.58,z+dz,0xf0d5aa);
    block(.16,1.2,.08,6.41,yy,z+dz,0xe5d1b4);
   }
+  // Individual roofline and storefront articulation, without extending collision footprints.
+  const plaster=mat(0xe5d8c5),frameMat=mat(0x544d47),sillMat=mat(0xb4a18b);
+  for(const dz of [-4.4,4.4]){
+   block(.12,h-.7,.2,6.47,(h-.7)/2+.2,z+dz,0xe5d8c5);
+  }
+  for(const dz of [-3.3,0,3.3]){
+   // Recessed-looking glass panels and projecting sills.
+   block(.1,.1,1.75,6.35,3.02,z+dz,0xb4a18b);
+   block(.11,.12,1.75,6.35,5.78,z+dz,0xb4a18b);
+  }
+  // Distinctive vertical timber battens above each shopfront.
+  for(const dz of [-4.6,-4.25,4.25,4.6])block(.08,1.05,.08,6.35,2.48,z+dz,0x544d47);
+  // A narrow gutter and drainpipe make the building read as constructed architecture.
+  block(.18,.14,11.2,6.52,h-.11,z,0x544d47);
+  block(.16,h-.1,.16,6.46,h/2,z+5.25,0x544d47);
   block(.7,.25,10.7,6.1,2.85,z,0x63524a);
   for(const dz of [-3.4,0,3.4])block(.16,2.4,2.3,6.35,1.45,z+dz,0x446978);
  }
