@@ -32,7 +32,7 @@ function build(){
  for(const x of [-3.4,-1.7]){block(.75,.1,.75,x,.84,-2.2,0x88694c);block(.09,.7,.09,x,.43,-2.2,0x443e39)}
  block(4,1.25,1.15,2.5,.65,-3.5,0x6d4833,true);block(2,.18,1.3,-2.5,.8,-2,0x644736,true);
  for(const x of [-3.3,-1.7])block(.65,.48,.65,x,.3,-.8,0x8d7058,true);
- const maja=makeCharacter(T,{coat:0x865c50,skin:0xe1ae8f,hair:0x533a2f,apron:true});maja.position.set(2,0,-2.45);scene.add(maja);const nameplate=makeWorldLabel(T,'Maja','Kafévert','#ffc18b',.75);nameplate.position.set(2,2.9,-2.45);scene.add(nameplate);target('maja',2,-1.2,'Snakk med Maja');
+ const maja=makeCharacter(T,{coat:0x865c50,skin:0xe1ae8f,hair:0x533a2f,apron:true,style:'long'});maja.position.set(2,0,-2.45);scene.add(maja);const nameplate=makeWorldLabel(T,'Maja','Kafévert','#ffc18b',.75);nameplate.position.set(2,2.9,-2.45);scene.add(nameplate);target('maja',2,-1.2,'Snakk med Maja');
  }else{
  block(3,.65,1.35,-2.8,.35,-3.1,0x617985,true);block(2.4,.17,1.4,2,.7,-1.2,0x6e4c3d,true);
  const frame=block(1.65,1.25,.14,2.8,2.25,-6.28,placed?0xbfd1d6:0x625b54);
