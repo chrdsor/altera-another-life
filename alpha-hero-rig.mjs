@@ -7,7 +7,10 @@ export function chooseHeroClip(clips,kind){
  return patterns.map(re=>clips.find(c=>re.test(c.name||''))).find(Boolean)||null;
 }
 export function heroAssetCompatible(report){return Boolean(report?.compatibleWithAlteraRig&&report?.skinnedMeshes>0)}
+export function validateHeroAssetPath(value){return typeof value==='string'&&/^\.\/assets\/characters\/[a-z0-9-]+\.glb$/.test(value)?value:null}
+export async function resolveHeroAssetUrl(fetcher=globalThis.fetch){try{const response=await fetcher('./assets/characters/hero-001.json',{cache:'no-store'});if(!response.ok)return null;const manifest=await response.json();return validateHeroAssetPath(manifest?.url)}catch{return null}}
 export async function attachHeroRig(T,character,{url=null,loader=null,onStatus=()=>{}}={}){
+ if(!url)url=await resolveHeroAssetUrl();
  if(!url)return null;
  if(!loader){const {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js');loader=new GLTFLoader()}
  let gltf;
@@ -23,6 +26,7 @@ export async function attachHeroRig(T,character,{url=null,loader=null,onStatus=(
  root.position.y-=bounds.min.y;
  const mixer=new T.AnimationMixer(root),clips=gltf.animations||[];
  const idle=chooseHeroClip(clips,'idle'),walk=chooseHeroClip(clips,'walk');
+ if(!idle||!walk){onStatus('Hero 001 requires idle and walk animation clips');return null}
  let active=null;
  function switchTo(clip){if(!clip||clip===active)return;const next=mixer.clipAction(clip);next.reset().fadeIn(.2).play();if(active)mixer.clipAction(active).fadeOut(.2);active=clip}
  character.add(root);
