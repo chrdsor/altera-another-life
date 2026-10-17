@@ -1,6 +1,7 @@
 import * as T from 'three';
 import {makeWorldLabel} from './alpha-map-ui.mjs';
 import {makeCharacter,animateCharacter} from './alpha-character-art.mjs';
+import {playerAppearance} from './alpha-avatar-bridge.mjs';
 import {movementVector,nearestTarget} from './alpha-movement.mjs';
 import {stepMotion,cameraDistanceFromWalls} from './alpha-gamefeel.mjs';
 import {normalizeQuest,advanceQuest,questObjective,questDialogue,QUEST_REWARD} from './alpha-quest.mjs';
@@ -38,7 +39,7 @@ function build(){
  const frame=block(1.65,1.25,.14,2.8,2.25,-6.28,placed?0xbfd1d6:0x625b54);
  frame.userData.postcard=true;target('postcard',2.8,-4.9,'Heng opp havnepostkort');
  }
- avatar=makeCharacter(T,{coat:0x395c70});avatar.position.set(0,0,4);scene.add(avatar);
+ avatar=makeCharacter(T,playerAppearance(localStorage));avatar.position.set(0,0,4);scene.add(avatar);
  target('exit',0,5.2,'Gå ut til District 01');
 }
 function pass(x,z){return x>-5&&x<5&&z>-5.8&&z<5.7&&!solids.some(o=>Math.abs(x-o.x)<o.w/2+.35&&Math.abs(z-o.z)<o.d/2+.35)}
