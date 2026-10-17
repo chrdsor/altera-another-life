@@ -16,6 +16,7 @@ export async function attachHeroRig(T,character,{url=null,loader=null,onStatus=(
  if(!loader){const {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js');loader=new GLTFLoader()}
  let gltf;
  try{gltf=await loader.loadAsync(url)}catch(error){onStatus('Hero 001 GLB unavailable: procedural fallback');return null}
+ if(!gltf?.scene||typeof gltf.scene.traverse!=='function'){onStatus('Hero 001 GLB missing scene');return null}
  const report=inspectHumanoid(gltf.scene,gltf.animations||[]);
  if(!heroAssetCompatible(report)){onStatus('Hero 001 rig incomplete: '+report.missingRequired.join(', '));return null}
  const root=gltf.scene;
