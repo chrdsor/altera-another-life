@@ -47,3 +47,16 @@ test('district loads and full welcome quest survives refresh',async({page})=>{
  await expect(page.locator('#objective')).toContainText('plassert',{timeout:20000});
  expect(errors).toEqual([]);
 });
+
+test('avatar studio appearance carries into District 01 and café',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://127.0.0.1:4173/alpha.html');
+ await expect(page.locator('#screen')).toBeHidden({timeout:20000});
+ await page.evaluate(()=>localStorage.setItem('altera-avatar-reference-v3',JSON.stringify({skin:'#f1c5a7',hair:'#21191b',eye:'#416b86',topColor:'#485e72',bottomColor:'#81766e',hairStyle:'Oppsatt',body:1.1})));
+ await page.reload();await expect(page.locator('#screen')).toBeHidden({timeout:20000});
+ await expect.poll(()=>page.evaluate(()=>window.__alteraTestAppearance?.().coat),{timeout:20000}).toBe(0x485e72);
+ await page.goto('http://127.0.0.1:4173/alpha-interior.html?room=cafe');
+ await expect.poll(()=>page.evaluate(()=>window.__alteraInteriorReady===true),{timeout:20000}).toBe(true);
+ await expect.poll(()=>page.evaluate(()=>window.__alteraTestAppearance?.().coat),{timeout:20000}).toBe(0x485e72);
+ expect(errors).toEqual([]);
+});
