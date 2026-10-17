@@ -21,3 +21,11 @@ The collaborator's `altera-studio.zip` is a separate WebGL2 client, **not** a dr
 2. Test avatar save/reload, quests, NPCs, phone, map and reload persistence.
 3. Select authoritative renderer and design API-backed data interfaces.
 4. Import external source into a reviewed branch only after source ownership and asset provenance are approved.
+
+## Follow-up candidate update (2026-10-17)
+- Separate downloadable ZIP now adds versioned District 01 progress JSON export/import under the game phone's **Lagring** tab.
+- Import requires user confirmation and validates format, file size, allowed save fields and message strings before replacing `altera-d01`.
+- Mobile phone tabs scroll horizontally to accommodate the additional tab.
+- `node tests/save-safety.test.cjs`, `node tests/progress-backup.test.cjs`, all six JavaScript syntax checks, and `python3 build.py` passed locally.
+- Avatar Studio appearance is not included in this backup. Browser and physical iPhone behavior remains unverified.
+- Candidate source remains outside GitHub; this PR only documents the ZIP release, not the implementation.
