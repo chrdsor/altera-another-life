@@ -11,6 +11,7 @@ export function validateHeroAssetPath(value){return typeof value==='string'&&/^\
 export async function resolveHeroAssetUrl(fetcher=globalThis.fetch){try{const response=await fetcher('./assets/characters/hero-001.json',{cache:'no-store'});if(!response.ok)return null;const manifest=await response.json();return validateHeroAssetPath(manifest?.url)}catch{return null}}
 export async function attachHeroRig(T,character,{url=null,loader=null,onStatus=()=>{}}={}){
  if(!url)url=await resolveHeroAssetUrl();
+ url=validateHeroAssetPath(url);
  if(!url)return null;
  if(!loader){const {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js');loader=new GLTFLoader()}
  let gltf;
