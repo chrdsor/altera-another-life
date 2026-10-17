@@ -7,7 +7,9 @@ export function buildDistrictVisuals(T,scene){
  block(13,.035,88,-.3,.04,-29,0x988675);
  block(1.25,.07,88,-5.8,.055,-29,0x6c716c);
  block(1.15,.06,88,5.8,.055,-29,0xb6a38d);
- block(14,.025,90,-17,-.02,-29,0x356a78);
+ const sea=new T.Mesh(new T.PlaneGeometry(15,90,18,45),new T.MeshStandardMaterial({color:0x286b80,roughness:.35,metalness:.12,transparent:true,opacity:.94,side:T.DoubleSide}));sea.rotation.x=-Math.PI/2;sea.position.set(-17,.025,-29);scene.add(sea);
+ const waterPositions=sea.geometry.attributes.position,baseWater=new Float32Array(waterPositions.array);
+ scene.userData.updateDistrictWater=(time)=>{for(let i=0;i<waterPositions.count;i++){const x=baseWater[i*3],y=baseWater[i*3+1];waterPositions.setZ(i,Math.sin(x*.8+time*.7)*.055+Math.cos(y*.5+time*.55)*.035)}waterPositions.needsUpdate=true;sea.geometry.computeVertexNormals()};
  for(let z=8;z>-68;z-=1.9){
   block(11.7,.012,.045,-.3,.066,z,0x786b5f);
   for(let x=-5.4;x<5.6;x+=1.1)block(.04,.012,1.8,x+((Math.round(z)%2)*.55),.067,z-.95,0x786b5f);
@@ -28,6 +30,28 @@ export function buildDistrictVisuals(T,scene){
   block(.7,.25,10.7,6.1,2.85,z,0x63524a);
   for(const dz of [-3.4,0,3.4])block(.16,2.4,2.3,6.35,1.45,z+dz,0x446978);
  }
+
+// A handcrafted hero storefront at the first approach to Kafé Varm.
+// Layered trim, glazed entrance, signage and an awning provide stronger silhouettes.
+const glass=mat(0x294b56),wood=mat(0x755440),cream=mat(0xf0d6b3);
+function heroFacade(z,accent,label){
+ const frame=new T.Group();frame.position.set(6.35,0,z);scene.add(frame);
+ function part(w,h,d,x,y,zz,material){const m=new T.Mesh(new T.BoxGeometry(w,h,d),material);m.position.set(x,y,zz);frame.add(m);return m}
+ part(.22,2.6,6.1,0,1.35,0,cream);
+ for(const offset of [-2.05,0,2.05]){
+  part(.11,2.02,1.45,-.16,1.47,offset,glass);
+  part(.15,2.15,.12,-.24,1.47,offset-.7,wood);
+  part(.15,2.15,.12,-.24,1.47,offset+.7,wood);
+  part(.17,.13,1.5,-.25,2.45,offset,cream);
+ }
+ part(.18,.24,6.4,-.25,2.72,0,mat(accent));
+ part(1.35,.14,5.8,-.72,2.94,0,mat(accent));
+ for(const zz of [-2.6,0,2.6])part(.08,.5,.09,-1.24,2.67,zz,wood);
+ const plaque=new T.Mesh(new T.PlaneGeometry(2.7,.65),panel(label));plaque.rotation.y=-Math.PI/2;plaque.position.set(-.4,3.55,0);frame.add(plaque);
+}
+heroFacade(-24,0xa64c3a,'KAFÉ VARM');
+heroFacade(-39,0x526f82,'GALLERI 01');
+
  // Café Varm, a visually dominant destination at the exact quest coordinate.
  block(1.8,.21,10.5,5.65,3.06,-24,0x9e4333);
  const sign=new T.Mesh(new T.PlaneGeometry(3.9,.95),panel('KAFÉ VARM'));sign.rotation.y=-Math.PI/2;sign.position.set(6.38,4.04,-24);scene.add(sign);
