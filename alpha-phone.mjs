@@ -1,5 +1,5 @@
 import {districtPlaces,destinationForQuest} from './alpha-wayfinding.mjs';
-export function setupDistrictPhone({getQuest,onNavigate,onMapOpen}){
+export function setupDistrictPhone({getQuest,onNavigate,onMapOpen,onAvatarStudio}){
  const $=id=>document.getElementById(id);
  const phone=$('phone'),toggle=$('phone-toggle'),close=$('phone-close');
  let selected=null,tab='missions';
@@ -17,7 +17,7 @@ export function setupDistrictPhone({getQuest,onNavigate,onMapOpen}){
   missions.append(button('Velkommen til District 01 · '+(step==='complete'?'Fullført':'Aktivt')+' · '+place.name+' – '+place.address,()=>navigate(place.id)));
   const places=$('phone-places');places.replaceChildren();
   for(const p of districtPlaces)places.append(button(p.name+' · '+p.address,()=>navigate(p.id)));
-  const contacts=$('phone-contacts');contacts.replaceChildren();contacts.append(document.createTextNode('Maja · Kafévert · Kafé Varm, Havneveien 4'));const customize=button('Tilpass avataren din ↗',()=>{try{sessionStorage.setItem('altera-avatar-return','alpha.html')}catch{}location.href='avatar-studio.html'});contacts.append(document.createElement('hr'),customize);
+  const contacts=$('phone-contacts');contacts.replaceChildren();contacts.append(document.createTextNode('Maja · Kafévert · Kafé Varm, Havneveien 4'));const customize=button('Tilpass avataren din ↗',()=>{onAvatarStudio?.();try{sessionStorage.setItem('altera-avatar-return','alpha.html')}catch{}location.href='avatar-studio.html'});contacts.append(document.createElement('hr'),customize);
   $('phone-contacts').dataset.avatarStudio='available';
 
   $('phone-messages').textContent=step==='complete'?'Maja: Takk for hjelpen! Postkortet er klart til å henges opp hjemme.':'Maja: Kom innom Kafé Varm. Jeg har et lite oppdrag til deg.';
