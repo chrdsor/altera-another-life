@@ -24,3 +24,6 @@ Name the six recolorable glTF materials exactly `Skin`, `Hair`, `Top`, `Bottom`,
 6. Record asset license, artist credit, polygon/texture counts, memory and frame timing.
 
 Never call Hero 001 production-ready until the model, avatar customization and visual/device gates have passed.
+
+## Native rig prototype (October 2026)
+A native Three.js prototype in `alpha-hero-prototype.mjs` now provides an articulated bone hierarchy and a skinned torso in District 01 and interiors. It uses the Avatar Studio palette and simple procedural motion. This is **not** a finished production model, not a GLB export, and not evidence of mobile visual quality. The validated optional external GLB loader still takes precedence when a licensed model is installed. Screenshots and performance testing remain required before merging.
