@@ -1,3 +1,4 @@
+import {buildHeroStreet} from './alpha-hero-street.mjs';
 // District 01 visual rebuild: coherent street composition, no downloaded assets.
 export function buildDistrictVisuals(T,scene){
  const mats=new Map(),mat=(c,em=0)=>{const key=c+':'+em;if(!mats.has(key))mats.set(key,new T.MeshStandardMaterial({color:c,roughness:.8,emissive:em,emissiveIntensity:em?.42:0}));return mats.get(key)};
@@ -81,4 +82,5 @@ heroFacade(-39,0x526f82,'GALLERI 01');
   block(.08,4,.08,-11,1.9,z,0xe4d8bf);
   const sail=new T.Mesh(new T.ConeGeometry(1.2,3.4,3),mat(0xe4d9ca));sail.rotation.y=.3;sail.position.set(-11,1.9,z-.45);scene.add(sail);
  }
+ buildHeroStreet(T,scene);
 }
