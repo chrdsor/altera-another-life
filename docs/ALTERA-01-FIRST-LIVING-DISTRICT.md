@@ -20,3 +20,6 @@ Use existing server/authoritative-world.mjs and server/http-server.mjs for ident
 
 ## Character art pass v2 (procedural fallback)
 District 01 characters now share a more legible human-shaped silhouette, pivoted limb joints, facial details, footwear, layered collars, hair variants and subtle idle breathing. Maja uses a consistent apron and long-hair variant outdoors and in the café. This remains geometry-based prototype art, not a licensed rigged GLB or production-quality facial animation. The next asset milestone remains a properly rigged Hero 001 GLB with documented provenance, LOD and animation clips.
+
+## Avatar Studio integration slice
+District 01 and the café/apartment now read the same normalized local appearance as Avatar Studio (skin, hair, eyes, top and bottom colors, shoes, hair length and body width). The phone links to the studio, and the studio can return directly to District 01. This is device-local cosmetic persistence, not an account-bound or server-authoritative avatar. The game character is still a procedural fallback rather than the fully rigged studio mesh. The next milestone is a shared rigged avatar renderer with animation clips and stable identity across multiplayer sessions.
