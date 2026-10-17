@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {appearanceSlot,applyHeroAppearance} from '../alpha-hero-appearance.mjs';
+import {appearanceSlot,applyHeroAppearance,applyHeroMorphs} from '../alpha-hero-appearance.mjs';
 test('Hero 001 only recognizes explicitly named semantic materials',()=>{
  assert.equal(appearanceSlot('Skin'),'skin');
  assert.equal(appearanceSlot('Top_Material'),'coat');
@@ -18,4 +18,13 @@ test('appearance colors are applied to cloned materials without changing shared 
  assert.equal(mesh.material[0].color.value,0x425a76);
  assert.equal(mesh.material[1],unknown);
  assert.equal(mesh.material[0]===original,false);
+});
+
+test('BodyWidth morph follows normalized Studio body setting',()=>{
+ const mesh={morphTargetDictionary:{BodyWidth:0},morphTargetInfluences:[0]};
+ const root={traverse(callback){callback(mesh)}};
+ assert.equal(applyHeroMorphs(root,{body:1.2}),1);
+ assert.equal(mesh.morphTargetInfluences[0],1);
+ applyHeroMorphs(root,{body:.82});assert.equal(mesh.morphTargetInfluences[0],0);
+ assert.equal(applyHeroMorphs(root,{body:NaN}),0);
 });
