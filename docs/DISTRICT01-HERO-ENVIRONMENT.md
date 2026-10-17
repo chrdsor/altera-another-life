@@ -4,6 +4,8 @@ Focus: the existing playable promenade and Kafé Varm. No new city districts.
 ## Implemented
 - Reusable Three.js low-poly street furnishing kit, without external assets or license dependencies.
 - Café entrance with layered glazing, framed doorway and warm glow.
+- Articulated upper-floor windows, cornices and a stepped roofline on Kafé Varm and Galleri 01.
+- Mobile minimap collapsed by default, with tap-to-expand and the existing full-map interaction preserved.
 - Outdoor tables/chairs, trees and tree pits, harbor bollards, cycle racks, litter bins, and façade lamps.
 - Existing quest, camera, map, phone and navigation retained.
 
