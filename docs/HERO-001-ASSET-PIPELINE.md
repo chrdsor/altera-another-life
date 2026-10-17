@@ -12,11 +12,14 @@ Publish the companion `assets/characters/hero-001.json` manifest:
 ```
 The manifest is optional and must only reference a local GLB in `assets/characters/`. Without it, no model is fetched. Invalid models retain the procedural fallback.
 
+## Avatar Studio palette contract
+Name the six recolorable glTF materials exactly `Skin`, `Hair`, `Top`, `Bottom`, `Shoes` and `Eyes` (optional `_Material` suffix). The runtime clones only these named materials and applies the locally saved Studio colors. Unknown materials are left unchanged. This supports basic color customization only: it does **not** change mesh geometry, hairstyles, clothing shapes or server-owned identities. Rigged GLB remains opt-in until a licensed asset is committed.
+
 ## Verification before release
 1. Validate mesh skinning, bone naming and animation clips in Avatar Studio diagnostics.
 2. Verify character is upright, faces forward, stays grounded, and does not float or clip on both District 01 and café floor.
 3. Confirm idle/walk blending and stable movement on mobile and desktop.
-4. Confirm avatar customization actually affects the rigged asset. **Current GLB pipeline does not yet apply studio color/garment customization to the imported mesh**; this is a separate acceptance gate.
+4. Confirm Studio palette is visibly applied to each named material and that hairstyle, clothing mesh choices and body morphs are not falsely presented as supported. Verify with real GLB and screenshots.
 5. Run CI quest/browser tests, record before/after screenshots and test on a physical iPhone.
 6. Record asset license, artist credit, polygon/texture counts, memory and frame timing.
 
