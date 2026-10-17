@@ -60,6 +60,19 @@ function heroFacade(z,accent,label){
   part(.15,2.15,.12,-.24,1.47,offset+.7,wood);
   part(.17,.13,1.5,-.25,2.45,offset,cream);
  }
+ // Distinctive cornice, canopy brackets and shallow upper-floor window bays.
+ const trim=mat(0xe3c9a6),dark=mat(0x31444b),roof=mat(accent);
+ part(.3,.16,6.7,-.22,2.84,0,trim);
+ part(.52,.15,6.9,-.25,3.06,0,roof);
+ for(const zz of [-2.05,0,2.05]){
+  part(.16,.92,1.22,-.22,3.78,zz,dark);
+  part(.17,.76,1.03,-.34,3.8,zz,glass);
+  part(.2,.1,1.4,-.42,3.35,zz,trim);
+  part(.12,.12,1.25,-.42,4.22,zz,trim);
+  part(.11,.86,.09,-.44,3.8,zz,wood);
+ }
+ part(.58,.24,7.15,-.2,4.43,0,roof);
+ part(.16,.21,7.25,-.1,4.63,0,trim);
  part(.18,.24,6.4,-.25,2.72,0,mat(accent));
  part(1.35,.14,5.8,-.72,2.94,0,mat(accent));
  for(const zz of [-2.6,0,2.6])part(.08,.5,.09,-1.24,2.67,zz,wood);
