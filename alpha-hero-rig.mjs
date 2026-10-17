@@ -1,6 +1,5 @@
 // Shared, opt-in rigged Hero 001 runtime for District 01 and interiors.
 // No model is bundled yet: the procedural avatar remains visible until a validated GLB loads.
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {inspectHumanoid} from './alpha-rig-validation.mjs';
 export const HERO_ASSET_URL='./assets/characters/hero-001.glb';
 export function chooseHeroClip(clips,kind){
@@ -8,8 +7,9 @@ export function chooseHeroClip(clips,kind){
  return patterns.map(re=>clips.find(c=>re.test(c.name||''))).find(Boolean)||null;
 }
 export function heroAssetCompatible(report){return Boolean(report?.compatibleWithAlteraRig&&report?.skinnedMeshes>0)}
-export async function attachHeroRig(T,character,{url=null,loader=new GLTFLoader(),onStatus=()=>{}}={}){
+export async function attachHeroRig(T,character,{url=null,loader=null,onStatus=()=>{}}={}){
  if(!url)return null;
+ if(!loader){const {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js');loader=new GLTFLoader()}
  let gltf;
  try{gltf=await loader.loadAsync(url)}catch(error){onStatus('Hero 001 GLB unavailable: procedural fallback');return null}
  const report=inspectHumanoid(gltf.scene,gltf.animations||[]);
