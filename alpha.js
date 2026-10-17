@@ -1,6 +1,7 @@
 import * as T from 'three';
 import {buildDistrictVisuals} from './alpha-district-visuals.mjs';
 import {makeCharacter,animateCharacter} from './alpha-character-art.mjs';
+import {playerAppearance} from './alpha-avatar-bridge.mjs';
 import {setupDistrictPhone} from './alpha-phone.mjs';
 import {districtPlaces} from './alpha-wayfinding.mjs';
 import {makeWorldLabel,createDistrictMap} from './alpha-map-ui.mjs';
@@ -25,7 +26,7 @@ for(let i=0;i<8;i++){const npc=makeCharacter(T,{coat:[0x886e62,0x566e82,0x75886e
 // Named café host: recognizable apron, hair and role label.
 const host=makeCharacter(T,{coat:0x704e4d,skin:0xe0ad8e,hair:0x593b2c,apron:true,style:'long'});host.position.set(4.2,0,-24);scene.add(host);const majaLabel=makeWorldLabel(T,'Maja','Kafévert · snakk inne på kaféen','#ffc18b',.75);majaLabel.position.set(4.2,2.85,-24);scene.add(majaLabel);
 for(const s of spots){const ring=new T.Mesh(new T.TorusGeometry(.78,.1,7,28),new T.MeshBasicMaterial({color:s.color}));ring.rotation.x=Math.PI/2;ring.position.set(s.x,.08,s.z);scene.add(ring);const pillar=box(.16,1.1,.16,s.x,.55,s.z,s.color);pillar.userData.spot=s;const sign=makeWorldLabel(T,s.name,s.id==='cafe'?'Havneveien 4':s.id==='quay'?'Havneveien 2':s.id==='home'?'Havneveien 8':'Havneveien 6', '#'+s.color.toString(16).padStart(6,'0'));sign.position.set(s.x,3.1,s.z);scene.add(sign);}
-player=makeCharacter(T,{coat:0x263e54,skin:0xe1ac89,hair:0x4b3329});player.position.set(0,0,5);try{const entry=JSON.parse(sessionStorage.getItem('altera-alpha-return')||'null');if(entry&&Number.isFinite(entry.x)&&Number.isFinite(entry.z)&&canMove(entry.x,entry.z)){player.position.set(entry.x,0,entry.z);yaw=Number.isFinite(entry.yaw)?entry.yaw:0}sessionStorage.removeItem('altera-alpha-return')}catch{}scene.add(player);
+player=makeCharacter(T,playerAppearance(localStorage));player.position.set(0,0,5);try{const entry=JSON.parse(sessionStorage.getItem('altera-alpha-return')||'null');if(entry&&Number.isFinite(entry.x)&&Number.isFinite(entry.z)&&canMove(entry.x,entry.z)){player.position.set(entry.x,0,entry.z);yaw=Number.isFinite(entry.yaw)?entry.yaw:0}sessionStorage.removeItem('altera-alpha-return')}catch{}scene.add(player);
 }
 function canMove(x,z){if(x < -6.7||x>6.7||z>9||z< -67)return false;return !obstacles.some(o=>Math.abs(x-o.x)<o.w/2+.36&&Math.abs(z-o.z)<o.d/2+.36)}
 function interact(){if(!near)return;if(near.id==='home'){try{sessionStorage.setItem('altera-alpha-return',JSON.stringify({x:player.position.x,z:player.position.z,yaw}))}catch{}location.href='alpha-interior.html?room=home';return}if(near.id==='cafe'){try{sessionStorage.setItem('altera-alpha-return',JSON.stringify({x:player.position.x,z:player.position.z,yaw}))}catch{}location.href='alpha-interior.html?room=cafe';return}if(near.id==='quay'){const changed=progressQuest('visit_quay');if(changed){discovered.add('quay');try{localStorage.setItem(stateKey,JSON.stringify({visited:[...discovered]}))}catch{}return}}const first=!discovered.has(near.id);discovered.add(near.id);try{localStorage.setItem(stateKey,JSON.stringify({visited:[...discovered]}))}catch{}$('visited').textContent=discovered.size+'/4 steder';say(first?'Oppdaget: '+near.name+' · '+discovered.size+'/4':'Du har allerede besøkt '+near.name);if(discovered.size===4&&first)say('Alle fire stedene er oppdaget! Progresjonen er lagret.')}
