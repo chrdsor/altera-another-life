@@ -25,3 +25,19 @@ export function applyHeroAppearance(root,appearance){
  });
  return updated;
 }
+
+// Optional Blender/glTF morph named BodyWidth, mapped to the Studio body slider.
+// Does not modify bone transforms or invent unsupported clothing meshes.
+export function applyHeroMorphs(root,appearance){
+ const width=Number(appearance?.body);
+ if(!Number.isFinite(width))return 0;
+ const weight=Math.max(0,Math.min(1,(width-.82)/(.38)));
+ let count=0;
+ root.traverse(object=>{
+  const dictionary=object.morphTargetDictionary,values=object.morphTargetInfluences;
+  if(!dictionary||!values)return;
+  const index=dictionary.BodyWidth??dictionary.bodyWidth;
+  if(Number.isInteger(index)&&index>=0&&index<values.length){values[index]=weight;count++}
+ });
+ return count;
+}
