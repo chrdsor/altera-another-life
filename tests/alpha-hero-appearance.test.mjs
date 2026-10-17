@@ -6,7 +6,7 @@ test('Hero 001 only recognizes explicitly named semantic materials',()=>{
  assert.equal(appearanceSlot('Top_Material'),'coat');
  assert.equal(appearanceSlot('Bottom'),'bottom');
  assert.equal(appearanceSlot('Eyes'),'eye');
- assert.equal(appearanceSlot('Wall'),'null'.replace('null','')||null);
+ assert.equal(appearanceSlot('Wall'),null);
 });
 test('appearance colors are applied to cloned materials without changing shared originals',()=>{
  const original={name:'Top',color:{setHex(){}},clone(){return {name:'Top',color:{setHex(hex){this.value=hex}}}}};
