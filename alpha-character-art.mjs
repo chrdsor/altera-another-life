@@ -1,11 +1,11 @@
 // ALTERA District 01: consistent, lightweight character kit.
 // Procedural art is a temporary fallback until a licensed rigged Hero 001 GLB is ready.
-export function makeCharacter(T,{coat=0x30485e,skin=0xdba885,hair=0x49352b,apron=false,style='short'}={}){
+export function makeCharacter(T,{coat=0x30485e,skin=0xdba885,hair=0x49352b,apron=false,style='short',bottom=0x303b48,shoes=0x24292d,body=1,eye=0x29292b}={}){
  const group=new T.Group(),cache=new Map();
  const mat=(c)=>{if(!cache.has(c))cache.set(c,new T.MeshStandardMaterial({color:c,roughness:.86}));return cache.get(c)};
  const add=(geometry,color,x,y,z,parent=group)=>{const mesh=new T.Mesh(geometry,mat(color));mesh.position.set(x,y,z);parent.add(mesh);return mesh};
  const box=(w,h,d,c,x,y,z,parent)=>add(new T.BoxGeometry(w,h,d),c,x,y,z,parent);
- const skinTone=skin,cloth=coat,denim=0x303b48,shoes=0x24292d;
+ const skinTone=skin,cloth=coat,denim=bottom,shoeColor=shoes;
  // The torso tapers toward the waist; a layered collar makes the silhouette less cylindrical.
  const torso=add(new T.CylinderGeometry(.34,.245,.79,10),cloth,0,1.22,0);
  box(.45,.12,.26,0xe5dacb,0,1.61,-.02);
@@ -14,7 +14,7 @@ export function makeCharacter(T,{coat=0x30485e,skin=0xdba885,hair=0x49352b,apron
  head.scale.set(.91,1.12,.89);
  // Face looks toward local -Z, matching the existing walking orientation.
  for(const x of [-.083,.083]){
-  add(new T.SphereGeometry(.026,8,6),0x29292b,x,1.955,-.202);
+  add(new T.SphereGeometry(.026,8,6),eye,x,1.955,-.202);
   add(new T.SphereGeometry(.034,8,6),hair,x,2.03,-.193);
  }
  const nose=add(new T.SphereGeometry(.034,8,6),skinTone,0,1.89,-.213);nose.scale.set(.7,.8,1.2);
@@ -35,7 +35,7 @@ export function makeCharacter(T,{coat=0x30485e,skin=0xdba885,hair=0x49352b,apron
   limbs.arms.push(arm);
   const leg=new T.Group();leg.position.set(side*.145,.86,0);group.add(leg);
   add(new T.CapsuleGeometry(.125,.43,5,9),denim,0,-.37,0,leg);
-  box(.245,.145,.37,shoes,0,-.745,-.09,leg);
+  box(.245,.145,.37,shoeColor,0,-.745,-.09,leg);
   limbs.legs.push(leg);
  }
  if(apron){
@@ -43,6 +43,7 @@ export function makeCharacter(T,{coat=0x30485e,skin=0xdba885,hair=0x49352b,apron
   box(.54,.075,.09,0x765440,0,1.44,-.3);
   box(.24,.18,.075,0xc4a889,0,1.08,-.32);
  }
+ group.scale.x=Math.min(1.16,Math.max(.86,body));
  group.userData.limbs=limbs;
  group.userData.torso=torso;
  group.userData.head=head;
