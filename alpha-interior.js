@@ -40,7 +40,7 @@ function build(){
  const frame=block(1.65,1.25,.14,2.8,2.25,-6.28,placed?0xbfd1d6:0x625b54);
  frame.userData.postcard=true;target('postcard',2.8,-4.9,'Heng opp havnepostkort');
  }
- avatar=makeCharacter(T,playerAppearance(localStorage));avatar.position.set(0,0,4);scene.add(avatar);attachHeroRig(T,avatar,{url:window.ALTERA_HERO_001_URL||null,onStatus:msg=>console.info(msg)}).then(rig=>{heroRig=rig}).catch(console.warn);
+ avatar=makeCharacter(T,playerAppearance(localStorage));avatar.position.set(0,0,4);scene.add(avatar);attachHeroRig(T,avatar,{onStatus:msg=>console.info(msg)}).then(rig=>{heroRig=rig}).catch(console.warn);
  target('exit',0,5.2,'Gå ut til District 01');
 }
 function pass(x,z){return x>-5&&x<5&&z>-5.8&&z<5.7&&!solids.some(o=>Math.abs(x-o.x)<o.w/2+.35&&Math.abs(z-o.z)<o.d/2+.35)}
