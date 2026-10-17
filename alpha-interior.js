@@ -2,6 +2,7 @@ import * as T from 'three';
 import {makeWorldLabel} from './alpha-map-ui.mjs';
 import {makeCharacter,animateCharacter} from './alpha-character-art.mjs';
 import {movementVector,nearestTarget} from './alpha-movement.mjs';
+import {stepMotion,cameraDistanceFromWalls} from './alpha-gamefeel.mjs';
 import {normalizeQuest,advanceQuest,questObjective,questDialogue,QUEST_REWARD} from './alpha-quest.mjs';
 import {readPostcardPlacement,placePostcard} from './alpha-home-demo.mjs';
 const $=id=>document.getElementById(id),room=new URLSearchParams(location.search).get('room')==='home'?'home':'cafe',questKey='altera-alpha-demo-quest-v1',homeKey='altera-alpha-demo-home-v1';
@@ -10,7 +11,7 @@ const unlocked=()=>quest.reward===QUEST_REWARD;
 const fallbackPage=room==='cafe'?'alpha-cafe.html':'alpha-home.html';
 let placed=readPostcardPlacement(localStorage.getItem(homeKey),unlocked());
 $('title').textContent=room==='cafe'?'ALTERA · Kafé Varm':'ALTERA · Din første leilighet';
-let scene,camera,renderer,avatar,yaw=0,near=null,last=performance.now(),drag=false,dragX=0;const keys=new Set(),solids=[],targets=[];
+let scene,camera,renderer,avatar,yaw=0,near=null,last=performance.now(),drag=false,dragX=0;const keys=new Set(),solids=[],targets=[];let motion={x:0,z:0};
 const mat=c=>new T.MeshStandardMaterial({color:c,roughness:.86});
 function block(w,h,d,x,y,z,color,solid=false){const m=new T.Mesh(new T.BoxGeometry(w,h,d),mat(color));m.position.set(x,y,z);scene.add(m);if(solid)solids.push({x,z,w,d});return m}
 function target(id,x,z,label){targets.push({id,x,z,label})}
@@ -49,8 +50,8 @@ function interact(){
  if(near.id==='postcard'){if(!unlocked()){$('dialogue').textContent='Fullfør Majas velkomstoppdrag først.';return}placed=placePostcard(true,placed);save(homeKey,{postcard:placed});scene.children.filter(o=>o.userData?.postcard).forEach(o=>o.material.color.setHex(0xbfd1d6));$('dialogue').textContent='Havnepostkortet er hengt opp og lagret i denne nettleseren.'}
 }
 function tick(now){const dt=Math.min((now-last)/1000,.05);last=now;const x=Number(keys.has('KeyD')||keys.has('ArrowRight'))-Number(keys.has('KeyA')||keys.has('ArrowLeft')),z=Number(keys.has('KeyS')||keys.has('ArrowDown'))-Number(keys.has('KeyW')||keys.has('ArrowUp'));const len=Math.hypot(x,z);
- if(len){const direction=movementVector(keys.has('KeyA')||keys.has('ArrowLeft'),keys.has('KeyD')||keys.has('ArrowRight'),keys.has('KeyW')||keys.has('ArrowUp'),keys.has('KeyS')||keys.has('ArrowDown'),yaw);const dx=direction.x*3*dt,dz=direction.z*3*dt;const p=avatar.position;if(pass(p.x+dx,p.z))p.x+=dx;if(pass(p.x,p.z+dz))p.z+=dz;avatar.rotation.y=-yaw}
- const p=avatar.position;const moving=len>0;const bob=moving?Math.sin(now*.012)*.025:0;animateCharacter(avatar,now*.001,moving?3:0);avatar.position.y=bob;camera.position.lerp(new T.Vector3(p.x+Math.sin(yaw)*3,2.9,p.z+Math.cos(yaw)*3),1-Math.exp(-dt*7));camera.lookAt(p.x,1.3,p.z);
+ const direction=movementVector(keys.has('KeyA')||keys.has('ArrowLeft'),keys.has('KeyD')||keys.has('ArrowRight'),keys.has('KeyW')||keys.has('ArrowUp'),keys.has('KeyS')||keys.has('ArrowDown'),yaw);motion=stepMotion(motion.x,motion.z,direction.x*len,direction.z*len,dt,{maxSpeed:3});const move=avatar.position;if(pass(move.x+motion.x*dt,move.z))move.x+=motion.x*dt;else motion.x=0;if(pass(move.x,move.z+motion.z*dt))move.z+=motion.z*dt;else motion.z=0;if(Math.hypot(motion.x,motion.z)>.12)avatar.rotation.y=Math.atan2(-motion.x,-motion.z);
+ const p=avatar.position;const moving=Math.hypot(motion.x,motion.z)>.1;const bob=moving?Math.sin(now*.012)*.025:0;animateCharacter(avatar,now*.001,moving?3:0);avatar.position.y=bob;const cameraGoal={x:p.x+Math.sin(yaw)*3,z:p.z+Math.cos(yaw)*3};const fraction=cameraDistanceFromWalls(p,cameraGoal,solids,{padding:.35,minDistance:1});camera.position.lerp(new T.Vector3(p.x+Math.sin(yaw)*3*fraction,2.9,p.z+Math.cos(yaw)*3*fraction),1-Math.exp(-dt*7));camera.lookAt(p.x,1.3,p.z);
  near=nearestTarget(targets,p);$('action').disabled=!near;$('action').textContent=near?.label||'Samhandle';$('hint').textContent=near?near.label:'Utforsk rommet og finn interaksjonspunktene';$('objective').textContent=room==='cafe'?questObjective(quest):(unlocked()?(placed?'Postkort plassert ✓':'Heng opp havnepostkortet'):'Fullfør velkomstoppdraget hos Maja');
  renderer.render(scene,camera);requestAnimationFrame(tick)}
 $('action').onclick=interact;
