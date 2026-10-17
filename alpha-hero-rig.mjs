@@ -8,7 +8,8 @@ export function chooseHeroClip(clips,kind){
  return patterns.map(re=>clips.find(c=>re.test(c.name||''))).find(Boolean)||null;
 }
 export function heroAssetCompatible(report){return Boolean(report?.compatibleWithAlteraRig&&report?.skinnedMeshes>0)}
-export async function attachHeroRig(T,character,{url=HERO_ASSET_URL,loader=new GLTFLoader(),onStatus=()=>{}}={}){
+export async function attachHeroRig(T,character,{url=null,loader=new GLTFLoader(),onStatus=()=>{}}={}){
+ if(!url)return null;
  let gltf;
  try{gltf=await loader.loadAsync(url)}catch(error){onStatus('Hero 001 GLB unavailable: procedural fallback');return null}
  const report=inspectHumanoid(gltf.scene,gltf.animations||[]);
