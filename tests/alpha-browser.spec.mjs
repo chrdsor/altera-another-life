@@ -47,3 +47,19 @@ test('district loads and full welcome quest survives refresh',async({page})=>{
  await expect(page.locator('#objective')).toContainText('plassert',{timeout:20000});
  expect(errors).toEqual([]);
 });
+
+test('mobile HUD starts with compact map and retains expandable navigation',async({page})=>{
+ await page.setViewportSize({width:390,height:844});
+ await page.goto('http://127.0.0.1:4173/alpha.html');
+ const map=page.locator('#minimap-details');
+ await expect(map).toHaveJSProperty('open',false);
+ await expect(map.locator('summary')).toBeVisible();
+ await map.locator('summary').click();
+ await expect(map).toHaveJSProperty('open',true);
+ await expect(page.locator('#district-map')).toBeVisible();
+ const box=await map.boundingBox();
+ expect(box).not.toBeNull();
+ expect(box.width).toBeLessThanOrEqual(110);
+ await page.locator('#phone-toggle').click();
+ await expect(page.locator('#phone')).toBeVisible();
+});
